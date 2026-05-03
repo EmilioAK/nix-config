@@ -23,6 +23,7 @@
       "mosh"
       "fastfetch"
       "starship"
+      "gh"
     ];
 
     casks = [
