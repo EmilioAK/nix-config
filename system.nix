@@ -68,7 +68,6 @@ in {
       FXPreferredViewStyle = "clmv";  # column view
     };
     NSGlobalDomain = {
-      AppleIconAppearanceTheme = "ClearLight";
       AppleInterfaceStyle = "Dark";
       InitialKeyRepeat = 14;
       KeyRepeat = 2;
