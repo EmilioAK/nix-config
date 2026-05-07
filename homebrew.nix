@@ -24,6 +24,7 @@
       "fastfetch"
       "starship"
       "gh"
+      "dafny"
     ];
 
     casks = [
