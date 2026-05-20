@@ -37,6 +37,8 @@
       "codex"
       "element"
       "visual-studio-code"
+      "vlc"
+      "trezor-suite"
     ];
 
     masApps = {
