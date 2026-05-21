@@ -1,0 +1,8 @@
+prefix_rule(pattern=["nix", "eval"], decision="allow")
+prefix_rule(pattern=["/bin/zsh", "-lc", "nix eval --raw \"path:$PWD#darwinConfigurations.default.system\" --impure"], decision="allow")
+prefix_rule(pattern=["git", "add"], decision="allow")
+prefix_rule(pattern=["git", "rebase"], decision="allow")
+prefix_rule(pattern=["git", "push"], decision="allow")
+prefix_rule(pattern=["npx", "--yes", "yarn@1.22.22", "add", "-D", "@playwright/test@^1.54.2"], decision="allow")
+prefix_rule(pattern=["npx", "--yes", "yarn@1.22.22", "add", "-DW", "@playwright/test@^1.54.2"], decision="allow")
+prefix_rule(pattern=["./node_modules/.bin/playwright", "test", "--config=playwright.config.ts", "--pass-with-no-tests"], decision="allow")

@@ -31,6 +31,8 @@ in {
 
   home.file.".zshenv".source = dotfile "zshenv";
   home.file.".zshrc".source = dotfile "zshrc";
+  home.file.".codex/config.toml".source = dotfile "codex/config.toml";
+  home.file.".codex/rules/default.rules".source = dotfile "codex/rules/default.rules";
   home.file.".gitconfig".source = dotfile "gitconfig";
   xdg.configFile."git/ignore".source = dotfile "git/ignore";
   xdg.configFile."ghostty/config".source = dotfile "ghostty/config";
