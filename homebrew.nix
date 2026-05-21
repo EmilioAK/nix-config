@@ -25,6 +25,7 @@
       "starship"
       "gh"
       "dafny"
+      "tmux"
     ];
 
     casks = [
