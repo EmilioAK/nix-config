@@ -3,6 +3,7 @@ model_reasoning_effort = "xhigh"
 approval_policy = "never"
 sandbox_mode = "danger-full-access"
 approvals_reviewer = "user"
+service_tier = "fast"
 [projects."/Users/emilio/.config/nix-darwin"]
 trust_level = "trusted"
 

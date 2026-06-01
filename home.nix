@@ -33,6 +33,8 @@ in {
   home.file.".zshrc".source = dotfile "zshrc";
   home.file.".codex/config.toml".source = dotfile "codex/config.toml";
   home.file.".codex/rules/default.rules".source = dotfile "codex/rules/default.rules";
+  home.file.".codex/skills".source = dotfile "codex/skills";
+  home.file.".codex/task-manager".source = dotfile "codex/task-manager";
   home.file.".gitconfig".source = dotfile "gitconfig";
   home.file.".taskrc".source = dotfile "taskrc";
   xdg.configFile."git/ignore".source = dotfile "git/ignore";
