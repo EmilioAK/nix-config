@@ -27,6 +27,7 @@
       "gh"
       "dafny"
       "tmux"
+      "task"
     ];
 
     casks = [
