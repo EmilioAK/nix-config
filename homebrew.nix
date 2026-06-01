@@ -6,6 +6,7 @@
       autoUpdate = true;
       upgrade = true;
       cleanup = "zap";
+      extraFlags = [ "--force-cleanup" ];
     };
 
     taps  = [ "nikitabobko/tap" ];
@@ -45,6 +46,7 @@
     masApps = {
       "Bitwarden" = 1352778147;
       "WhatsApp Messenger" = 310633997;
+      "OmniFocus 4" = 1542143627;
     };
   };
 }

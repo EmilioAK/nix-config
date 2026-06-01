@@ -30,6 +30,9 @@ trust_level = "trusted"
 [projects."/Users/emilio/Work/Capisoft/Trading"]
 trust_level = "trusted"
 
+[projects."/Users/emilio/Work/Thesis"]
+trust_level = "trusted"
+
 [tui.model_availability_nux]
 "gpt-5.5" = 4
 
