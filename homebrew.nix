@@ -42,12 +42,12 @@
       "visual-studio-code"
       "vlc"
       "trezor-suite"
+      "obsidian"
     ];
 
     masApps = {
       "Bitwarden" = 1352778147;
       "WhatsApp Messenger" = 310633997;
-      "OmniFocus 4" = 1542143627;
     };
   };
 }
