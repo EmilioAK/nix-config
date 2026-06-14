@@ -7,8 +7,8 @@
     ];
   };
 
-  home-manager.users.${username}.programs.ssh.matchBlocks."bitbucket.org" = {
-    identityFile = "~/.ssh/id_ed25519_bitbucket";
-    identitiesOnly = true;
+  home-manager.users.${username}.programs.ssh.settings."bitbucket.org" = {
+    IdentityFile = "~/.ssh/id_ed25519_bitbucket";
+    IdentitiesOnly = "yes";
   };
 }

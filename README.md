@@ -1,47 +1,69 @@
-# Setup
+# nix-darwin
+
+Personal macOS system config: nix-darwin + home-manager + Homebrew. Inputs track
+rolling release (nixpkgs-unstable, nix-darwin master, home-manager master), and
+`drs` commits `flake.lock` so every machine reproduces a known-good state.
+
+## Setup (new machine)
 
 1. Install Nix: <https://nixos.org/download/>
 2. Install Homebrew: <https://brew.sh/>
-3. Run:
+3. Sign in to the App Store (required for the `masApps` in `homebrew.nix`).
+4. Clone the repo (it must live at `~/.config/nix-darwin`) and run the bootstrap:
 
-```sh
-mkdir -p ~/.config
-git clone https://github.com/EmilioAK/nix-darwin-config ~/.config/nix-darwin
-cd ~/.config/nix-darwin
-git remote set-url --push origin git@github.com:EmilioAK/nix-darwin-config.git
-```
+   ```sh
+   mkdir -p ~/.config
+   git clone https://github.com/EmilioAK/nix-darwin-config ~/.config/nix-darwin
+   cd ~/.config/nix-darwin
+   git remote set-url --push origin git@github.com:EmilioAK/nix-darwin-config.git
+   scripts/bootstrap
+   ```
 
-4. Run:
+   `scripts/bootstrap` will:
+   - create `hosts/<LocalHostName>.nix` for this machine (if missing),
+   - install `gh` and store a GitHub API token for Nix (see below),
+   - run the first `darwin-rebuild switch`,
+   - commit the new host file.
 
-```sh
-cat > local.nix <<EOF
-{
-  hostname = "$(scutil --get LocalHostName)";
-  username = "$(id -un)";
-  system = "$( [ "$(uname -m)" = arm64 ] && echo aarch64-darwin || echo x86_64-darwin )";
-  workModules = [
-    # Add tracked work modules here, for example an empty placeholder:
-    # ./work/example.nix
-  ];
-}
-EOF
-```
+5. Push the new host entry: `git push`.
 
-5. Run:
+## Daily use
 
-```sh
-sudo nix --extra-experimental-features "nix-command flakes" \
-  run nix-darwin/nix-darwin-25.11#darwin-rebuild -- \
-  switch --flake "path:$HOME/.config/nix-darwin#$(scutil --get LocalHostName)"
-```
+- `drs` — update flake inputs, rebuild, and commit `flake.lock` on success
+  (restores the lock if the build fails). Defined in
+  `dotfiles/fish/functions/drs.fish`.
 
-Notes:
+## Adding a machine
 
-- This repo expects to live at `~/.config/nix-darwin`
-- `local.nix` is required and local-only, so the flake ref uses `path:`
-- `local.nix` can opt into tracked modules from `work/` via `workModules`
+Run `scripts/bootstrap` on the new machine; it creates and commits a
+`hosts/<LocalHostName>.nix` entry. Edit that file to set `workModules` if needed
+— paths are relative to `hosts/`, e.g. `[ ../work/capisoft.nix ]`.
 
-Current limitations:
+## GitHub token
 
-- Control Center layout is not tracked — macOS stores it in an opaque format and there's no supported way to set it declaratively
-- Shortcuts automations are not tracked — personal automations are device-local and Apple does not sync them via iCloud, and Nix has no hook into the Shortcuts database
+`scripts/install-github-nix-token` takes the `gh` CLI token, writes it to
+`~/.config/nix/github-access-token.conf`, and `!include`s it from both the user
+and system Nix config (so user- and root-run flake fetches are authenticated and
+don't hit the unauthenticated rate limit). The token file is local-only: it is
+never committed and never copied into the Nix store. Re-run the script after
+re-authenticating `gh`, since `gh auth login`/`refresh` rotates the token.
+
+## Notes / gotchas
+
+- The repo must live at `~/.config/nix-darwin`.
+- First switch: if Nix's installer left an unmanaged `/etc/nix/nix.conf` (or
+  `/etc/zshrc`, etc.), activation stops and prints `mv` instructions — follow
+  them and re-run `scripts/bootstrap`.
+- SSH keys: `gh auth login` (triggered by the token script) can generate and
+  upload the GitHub key. The Bitbucket work key
+  (`~/.ssh/id_ed25519_bitbucket`) is provisioned manually.
+- Rolling release: roll back a bad update with
+  `git -C ~/.config/nix-darwin checkout <good-commit> -- flake.lock` followed by
+  `sudo darwin-rebuild switch --flake ~/.config/nix-darwin#$(scutil --get LocalHostName)`.
+
+## Not tracked
+
+- Control Center layout — macOS stores it in an opaque format with no supported
+  declarative knob.
+- Shortcuts automations — device-local, not synced via iCloud, and Nix has no
+  hook into the Shortcuts database.

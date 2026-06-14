@@ -16,7 +16,12 @@ in {
     home = "/Users/${username}";
   };
 
-  nix.settings.experimental-features = "nix-command flakes";
+  nix = {
+    settings.experimental-features = "nix-command flakes";
+    extraOptions = ''
+      !include /Users/${username}/.config/nix/github-access-token.conf
+    '';
+  };
 
   security.pam.services.sudo_local.touchIdAuth = true;
 

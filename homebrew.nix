@@ -43,6 +43,7 @@
       "vlc"
       "trezor-suite"
       "obsidian"
+      "claude-code@latest"
     ];
 
     masApps = {

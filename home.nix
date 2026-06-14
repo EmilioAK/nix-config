@@ -1,4 +1,4 @@
-{ pkgs, config, username, ... }:
+{ config, username, ... }:
 let
   flakeRoot = "${config.home.homeDirectory}/.config/nix-darwin";
   dotfile = path: config.lib.file.mkOutOfStoreSymlink "${flakeRoot}/dotfiles/${path}";
@@ -11,11 +11,11 @@ in {
   programs.ssh = {
     enable = true;
     enableDefaultConfig = false;
-    matchBlocks = {
+    settings = {
       vps = {
-        hostname = "vps.emilioak.dev";
-        identityFile = "~/.ssh/id_ed25519";
-        identitiesOnly = true;
+        HostName = "vps.emilioak.dev";
+        IdentityFile = "~/.ssh/id_ed25519";
+        IdentitiesOnly = "yes";
       };
     };
   };
@@ -23,10 +23,6 @@ in {
   programs.direnv = {
     enable = true;
     nix-direnv.enable = true;
-    # Temporary Darwin workaround: direnv's upstream fish check is currently
-    # getting killed during nix builds, so disable checks until nixpkgs lands
-    # the proper fix.
-    package = pkgs.direnv.overrideAttrs (_: { doCheck = false; });
   };
 
   home.file.".zshenv".source = dotfile "zshenv";
