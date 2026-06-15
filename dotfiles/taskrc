@@ -24,7 +24,7 @@ report.await.description=Waiting tasks and hidden waiting items
 report.await.columns=id,project,tags,wait,scheduled,due,description
 report.await.labels=ID,Project,Tags,Wait,Scheduled,Due,Description
 report.await.sort=wait+,scheduled+,due+,project+
-report.await.filter=status:pending ( +waiting or +WAITING )
+report.await.filter=( ( +PENDING +waiting ) or +WAITING )
 
 uda.reviewed.type=date
 uda.reviewed.label=Reviewed
