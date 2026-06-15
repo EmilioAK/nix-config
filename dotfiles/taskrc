@@ -1,1 +1,35 @@
 data.location=/Users/emilio/Library/Mobile Documents/com~apple~CloudDocs/Taskwarrior
+
+default.command=focus
+
+report.inbox.description=Unprocessed captured tasks
+report.inbox.columns=id,entry,project,tags,description
+report.inbox.labels=ID,Added,Project,Tags,Description
+report.inbox.sort=entry+
+report.inbox.filter=status:pending +inbox
+
+report.focus.description=Ready next, soon, and deadline tasks
+report.focus.columns=id,project,tags,scheduled.countdown,due.relative,urgency,description
+report.focus.labels=ID,Project,Tags,Sch,Due,Urg,Description
+report.focus.sort=urgency-,due+,scheduled+,project+
+report.focus.filter=status:pending +READY -inbox -waiting -blocked -someday ( +next or +soon or +DUE or +OVERDUE )
+
+report.stale.description=Active pending tasks not touched for 14 days
+report.stale.columns=id,modified,project,tags,scheduled,due,description
+report.stale.labels=ID,Modified,Project,Tags,Scheduled,Due,Description
+report.stale.sort=modified+
+report.stale.filter=status:pending -inbox -waiting -blocked -someday -WAITING modified.before:today-14d
+
+report.await.description=Waiting tasks and hidden waiting items
+report.await.columns=id,project,tags,wait,scheduled,due,description
+report.await.labels=ID,Project,Tags,Wait,Scheduled,Due,Description
+report.await.sort=wait+,scheduled+,due+,project+
+report.await.filter=status:pending ( +waiting or +WAITING )
+
+uda.reviewed.type=date
+uda.reviewed.label=Reviewed
+
+report._reviewed.description=Tasksh review report
+report._reviewed.columns=uuid
+report._reviewed.sort=reviewed+,modified+
+report._reviewed.filter=( reviewed.none: or reviewed.before:now-1week ) and ( +PENDING or +WAITING )

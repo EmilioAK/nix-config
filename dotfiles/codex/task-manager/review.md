@@ -10,6 +10,7 @@ Look for:
 
 - Overdue and due-today tasks.
 - Pending `+next` tasks.
+- Pending `+soon` tasks that have reached their scheduled attention date or are becoming stale.
 - `+inbox` tasks that may hide obligations.
 - `+waiting` tasks whose wait date has passed.
 - Stale but relevant tasks.
@@ -24,6 +25,7 @@ Purpose: turn rough capture into usable task state.
 For each `+inbox` task, decide whether it should become:
 
 - A concrete `+next` action.
+- A `+soon` action with an optional scheduled attention date.
 - A `+waiting` item.
 - A `+blocked` item needing clarification.
 - A `+someday` item.
@@ -40,6 +42,7 @@ Look for:
 
 - Projects with no `+next` task.
 - Stale `+next` tasks.
+- `+soon` tasks that should either become `+next`, be rescheduled, or move to `+someday`.
 - Old `+inbox` tasks.
 - `+blocked` tasks that need a decision or decomposition.
 - `+waiting` tasks that should be followed up.
@@ -72,3 +75,19 @@ Useful recurring checks:
 - Long-lived `+blocked` or `+waiting` tasks.
 
 These checks can later become scripts if they prove useful.
+
+## Tasksh Review
+
+Use `tasksh` for interactive review sessions. Tasksh uses the `reviewed` UDA and `_reviewed` report in `.taskrc` to avoid reviewing the same task more than weekly.
+
+Inside tasksh, run:
+
+```text
+review
+```
+
+or review a fixed number of tasks:
+
+```text
+review 12
+```

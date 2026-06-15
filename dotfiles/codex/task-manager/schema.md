@@ -10,6 +10,7 @@ Areas are top-level project prefixes:
 Personal.*
 Work.*
 Uni.*
+Side.*
 Development.*
 ```
 
@@ -33,11 +34,14 @@ Each active non-inbox task should usually have one primary role tag:
 
 - `+inbox`: captured but not shaped.
 - `+next`: concrete and available to do.
+- `+soon`: should stay visible or resurface soon, but is not the current next action.
 - `+waiting`: blocked on another person, event, or external response.
 - `+blocked`: blocked by unclear scope, missing decision, or internal structure.
 - `+someday`: real but intentionally inactive.
 
 Role tags are the main anti-drift mechanism. They let Codex distinguish actionable work from parked, blocked, or messy work.
+
+Keep `+next` small enough to answer "what should I do now?". Use `+soon` plus `scheduled` for soft resurfacing when a task matters soon but should not compete as an immediate next action.
 
 ## Optional Shape Tags
 
@@ -57,6 +61,8 @@ Do not add location/context tags by default.
 - `scheduled`: optional explicit attention date; do not require it on every task.
 
 Tasks without deadlines should resurface through age, role, project health, and review logic. Do not create fake deadlines for urgency.
+
+For waiting items, use `+waiting` for the semantic state and add `wait` only when there is a useful check-back date.
 
 ## Annotations
 

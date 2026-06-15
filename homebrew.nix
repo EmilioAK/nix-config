@@ -28,6 +28,7 @@
       "dafny"
       "tmux"
       "task"
+      "tasksh"
     ];
 
     casks = [

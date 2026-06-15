@@ -31,6 +31,7 @@ Use these top-level project prefixes:
 - `Personal.*`: home, health, admin, relationships, life maintenance.
 - `Work.*`: job, career, professional development, certifications.
 - `Uni.*`: university courses, assignments, exams, academic projects.
+- `Side.*`: side projects and optional technical builds.
 - `Development.*`: therapy, personal development, reflection, behavior-change work.
 
 Use `Development.Therapy` for therapy-related work when appropriate. Prefer `Development` over `Psychologist` unless the task is specifically about appointments or direct psychologist logistics.

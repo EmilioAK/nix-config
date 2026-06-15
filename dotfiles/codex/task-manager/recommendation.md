@@ -19,6 +19,7 @@ Prefer a reasoned recommendation over raw Taskwarrior priority. Consider:
 
 - Real deadline pressure: overdue, due today, due soon.
 - Available `+next` tasks.
+- `+soon` tasks whose scheduled attention date has arrived or whose project needs momentum.
 - Stale `+next` tasks that remain relevant.
 - Projects with momentum or a short path to meaningful completion.
 - Important projects with no current `+next` task.
