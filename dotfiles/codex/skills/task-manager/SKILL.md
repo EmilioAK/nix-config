@@ -20,16 +20,51 @@ Read only the files needed for the current request:
 
 - Use Taskwarrior for real tasks. Do not create a parallel markdown task list.
 - Keep the system easy to revise: prefer native Taskwarrior projects, tags, dates, and annotations over custom fields or hooks.
-- Areas are top-level project prefixes: `Personal.*`, `Work.*`, `Uni.*`, and `Development.*`.
+- Areas are top-level project prefixes: `Personal.*`, `Work.*`, `Uni.*`, `Side.*`, and `Development.*`.
 - Treat big outcomes as projects; treat tasks as concrete next actions.
-- Use role tags to keep task state legible: `+inbox`, `+next`, `+waiting`, `+blocked`, `+someday`.
+- Use role tags to keep task state legible: `+inbox`, `+next`, `+soon`, `+waiting`, `+blocked`, `+someday`.
 - Do not use context tags by default. The user's normal working context is couch plus computer.
 - Use `due` only for real external deadlines. Do not invent fake due dates to create urgency.
-- Prefer age, project health, role tags, and annotations for resurfacing tasks without deadlines.
+- Use `scheduled` for soft attention/resurfacing dates and `wait` for waiting/check-back dates.
+- Prefer age, project health, role tags, scheduled dates, and annotations for resurfacing tasks without deadlines.
+
+## Current Task System
+
+Use these role meanings:
+
+- `+inbox`: captured but not shaped.
+- `+next`: concrete and available as a real candidate for the next work block.
+- `+soon`: important soon or ASAP, but should not compete as the immediate answer to "what now?"
+- `+waiting`: blocked on another person, event, or external response.
+- `+blocked`: blocked by unclear scope, missing decision, or internal structure.
+- `+someday`: real but intentionally inactive.
+
+Keep `+next` small. When a task matters soon but is not a current next action, use `+soon`, optionally with `scheduled:` so it resurfaces intentionally. Do not use fake due dates to make soft tasks visible.
+
+Use these date semantics:
+
+- `due:` for real external deadlines only.
+- `scheduled:` for soft resurfacing or planned attention.
+- `wait:` when a task should be hidden until a check-back date or until it can matter again.
+
+For waiting items, `+waiting` is the semantic state. Add `wait:` only when there is a useful check-back date.
 
 ## Working With Taskwarrior
 
 Use `task export` for broad inspection and reasoning. Use narrower `task` filters for focused changes or quick views.
+
+The configured CLI surface is:
+
+- `ti "..."`: capture a rough task as `+inbox`.
+- `tin`: show unprocessed inbox tasks.
+- `tf` or `task focus`: main ready/soon/deadline view.
+- `ta` or `task await`: waiting tasks, including native `wait:` tasks.
+- `ts` or `task stale`: active stale tasks needing review.
+- `trev` or `tasksh`: open Tasksh; inside it run `review` or `review N`.
+
+Custom reports are defined in `.taskrc`: `inbox`, `focus`, `stale`, `await`, and Tasksh's `_reviewed`. Plain `task` defaults to `focus`.
+
+Tasksh review uses the `reviewed` UDA and `_reviewed` report to avoid reviewing the same task more often than weekly. Let Tasksh populate `reviewed`; do not maintain it manually unless repairing review state.
 
 Before destructive or broad changes, summarize the intended edits and get confirmation. Single explicit actions like "add this task", "mark task 12 done", or "change task 8 to Work.AzureCert" can be executed directly.
 
@@ -43,10 +78,10 @@ When adding or reshaping tasks:
 
 ## Expected Behaviors
 
-For "what should I do now?", inspect the task set and recommend a small number of actions with reasons. Rank by deadline pressure, available next actions, stale but important projects, project momentum, blocked work that needs repair, and any current time/energy constraints the user gives.
+For "what should I do now?", inspect the task set and recommend a small number of actions with reasons. Rank by deadline pressure, available `+next` tasks, `+soon` tasks whose scheduled attention date has arrived, stale but important projects, project momentum, blocked work that needs repair, and any current time/energy constraints the user gives.
 
 For triage, turn messy descriptions into projects, next actions, waiting items, blockers, or someday items. Ask only when the answer materially affects task state.
 
-For reviews, look for drift: stale tasks, lingering inbox items, projects without `+next` actions, obsolete tasks, and blocked/waiting items that need follow-up.
+For reviews, look for drift: stale tasks, lingering inbox items, projects without `+next` actions, `+soon` tasks that should be promoted/rescheduled/demoted, obsolete tasks, and blocked/waiting items that need follow-up.
 
 When changing the system itself, keep the schema conservative and update the markdown policy files before adding scripts, hooks, or custom Taskwarrior fields.
