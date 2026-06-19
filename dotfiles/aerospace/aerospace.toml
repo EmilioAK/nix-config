@@ -54,20 +54,20 @@ on-mode-changed = []
     alt-f = 'fullscreen'
 
     # Layout
-    alt-slash = 'layout tiles horizontal vertical'
-    alt-comma = 'layout accordion horizontal vertical'
+    alt-q = 'layout tiles horizontal vertical'
+    alt-e = 'layout accordion horizontal vertical'
 
     # Focus
-    alt-h = 'focus --boundaries-action wrap-around-the-workspace left'
-    alt-j = 'focus --boundaries-action wrap-around-the-workspace down'
-    alt-k = 'focus --boundaries-action wrap-around-the-workspace up'
-    alt-l = 'focus --boundaries-action wrap-around-the-workspace right'
+    alt-a = 'focus --boundaries-action wrap-around-the-workspace left'
+    alt-s = 'focus --boundaries-action wrap-around-the-workspace down'
+    alt-w = 'focus --boundaries-action wrap-around-the-workspace up'
+    alt-d = 'focus --boundaries-action wrap-around-the-workspace right'
 
     # Move windows
-    alt-shift-h = 'move left'
-    alt-shift-j = 'move down'
-    alt-shift-k = 'move up'
-    alt-shift-l = 'move right'
+    alt-shift-a = 'move left'
+    alt-shift-s = 'move down'
+    alt-shift-w = 'move up'
+    alt-shift-d = 'move right'
 
     # Resize
     alt-minus = 'resize smart -50'
@@ -84,38 +84,32 @@ on-mode-changed = []
     alt-8 = 'workspace 8'
     alt-9 = 'workspace 9'
 
-    alt-a = 'workspace A'
     alt-b = 'workspace B'
     alt-c = 'workspace C'
-    alt-d = 'workspace D'
 
-    # Disabled so League of Legends can use Option + E for self-cast
-    # alt-e = 'workspace E'
+    # E is reserved for one-handed layout switching.
 
-    alt-g = 'workspace G'
+    alt-g = 'mode service'
     alt-i = 'workspace I'
     alt-m = 'workspace M'
     alt-n = 'workspace N'
     alt-o = 'workspace O'
     alt-p = 'workspace P'
 
-    # Disabled so League of Legends can use Option + Q for self-cast
-    # alt-q = 'workspace Q'
+    # Q is reserved for one-handed layout switching.
 
     # Disabled so League of Legends can use Option + R for self-cast
     # alt-r = 'workspace R'
 
-    alt-s = 'workspace S'
     alt-t = 'workspace T'
     alt-u = 'workspace U'
     alt-v = 'workspace V'
 
-    # Disabled so League of Legends can use Option + W for self-cast
-    # alt-w = 'workspace W'
+    # W/A/S/D are reserved for one-handed window focus.
 
-    alt-x = 'workspace X'
+    alt-x = 'resize smart +50'
     alt-y = 'workspace Y'
-    alt-z = 'workspace Z'
+    alt-z = 'resize smart -50'
 
     # Move window to workspace
     alt-shift-1 = 'move-node-to-workspace 1'
@@ -128,12 +122,9 @@ on-mode-changed = []
     alt-shift-8 = 'move-node-to-workspace 8'
     alt-shift-9 = 'move-node-to-workspace 9'
 
-    alt-shift-a = 'move-node-to-workspace A'
     alt-shift-b = 'move-node-to-workspace B'
     alt-shift-c = 'move-node-to-workspace C'
-    alt-shift-d = 'move-node-to-workspace D'
     alt-shift-e = 'move-node-to-workspace E'
-    alt-shift-g = 'move-node-to-workspace G'
     alt-shift-i = 'move-node-to-workspace I'
     alt-shift-m = 'move-node-to-workspace M'
     alt-shift-n = 'move-node-to-workspace N'
@@ -141,11 +132,9 @@ on-mode-changed = []
     alt-shift-p = 'move-node-to-workspace P'
     alt-shift-q = 'move-node-to-workspace Q'
     alt-shift-r = 'move-node-to-workspace R'
-    alt-shift-s = 'move-node-to-workspace S'
     alt-shift-t = 'move-node-to-workspace T'
     alt-shift-u = 'move-node-to-workspace U'
     alt-shift-v = 'move-node-to-workspace V'
-    alt-shift-w = 'move-node-to-workspace W'
     alt-shift-x = 'move-node-to-workspace X'
     alt-shift-y = 'move-node-to-workspace Y'
     alt-shift-z = 'move-node-to-workspace Z'
@@ -156,19 +145,16 @@ on-mode-changed = []
     # Move workspace to monitor
     alt-shift-tab = 'move-workspace-to-monitor --wrap-around next'
 
-    # Service mode
-    alt-shift-semicolon = 'mode service'
-
 [mode.service.binding]
     esc = ['reload-config', 'mode main']
     r = ['flatten-workspace-tree', 'mode main']
     f = ['layout floating tiling', 'mode main']
-    backspace = ['close-all-windows-but-current', 'mode main']
+    x = ['close-all-windows-but-current', 'mode main']
 
-    alt-shift-h = ['join-with left', 'mode main']
-    alt-shift-j = ['join-with down', 'mode main']
-    alt-shift-k = ['join-with up', 'mode main']
-    alt-shift-l = ['join-with right', 'mode main']
+    a = ['join-with left', 'mode main']
+    s = ['join-with down', 'mode main']
+    w = ['join-with up', 'mode main']
+    d = ['join-with right', 'mode main']
 
 [[on-window-detected]]
     if.app-id = 'com.tinyspeck.slackmacgap'
