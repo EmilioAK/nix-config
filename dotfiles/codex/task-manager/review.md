@@ -9,8 +9,8 @@ Purpose: decide what deserves attention soon.
 Look for:
 
 - Overdue and due-today tasks.
-- Pending `+next` tasks.
-- Pending `+soon` tasks that have reached their scheduled attention date or are becoming stale.
+- Pending `+next` tasks, including whether the focus list is too large.
+- Pending `+asap` tasks that have reached their scheduled attention date or are becoming stale.
 - `+inbox` tasks that may hide obligations.
 - `+waiting` tasks whose wait date has passed.
 - Stale but relevant tasks.
@@ -24,8 +24,8 @@ Purpose: turn rough capture into usable task state.
 
 For each `+inbox` task, decide whether it should become:
 
-- A concrete `+next` action.
-- A `+soon` action with an optional scheduled attention date.
+- A `+next` item only if it should be deliberately selected for the current focus list.
+- A `+asap` action with an optional scheduled attention date.
 - A `+waiting` item.
 - A `+blocked` item needing clarification.
 - A `+someday` item.
@@ -40,9 +40,9 @@ Purpose: reduce desync from reality.
 
 Look for:
 
-- Projects with no `+next` task.
+- Active-priority projects with no clear available action.
 - Stale `+next` tasks.
-- `+soon` tasks that should either become `+next`, be rescheduled, or move to `+someday`.
+- `+asap` tasks that should either be promoted into the small `+next` focus list, be rescheduled, or move to `+someday`.
 - Old `+inbox` tasks.
 - `+blocked` tasks that need a decision or decomposition.
 - `+waiting` tasks that should be followed up.
@@ -59,7 +59,7 @@ Process:
 
 1. Inspect all tasks under the project.
 2. Identify the desired outcome.
-3. Find the next concrete action.
+3. Find a concrete available action, without automatically tagging it `+next`.
 4. Mark obsolete tasks for confirmation.
 5. Convert vague tasks into actions, blockers, waiting items, or someday items.
 6. Add annotations where future context is needed.
@@ -70,7 +70,7 @@ Useful recurring checks:
 
 - Pending tasks with no project.
 - Pending tasks with no role tag.
-- Projects with pending tasks but no `+next`.
+- Active-priority projects with pending tasks but no clear available action.
 - Tasks with due dates that may be fake.
 - Long-lived `+blocked` or `+waiting` tasks.
 

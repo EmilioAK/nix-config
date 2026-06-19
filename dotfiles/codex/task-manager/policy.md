@@ -15,7 +15,7 @@ The primary interface is conversation with Codex. Direct Taskwarrior use should 
 
 When the user describes a situation, Codex should usually:
 
-1. Identify outcomes, next actions, blockers, and waiting items.
+1. Identify outcomes, concrete actions, blockers, and waiting items.
 2. Store concrete actions in Taskwarrior.
 3. Add enough structure for later retrieval.
 4. Avoid over-questioning unless uncertainty would create bad task data.
@@ -64,11 +64,11 @@ A triaged task should usually have:
 
 - A project.
 - A concrete action title.
-- One primary role tag.
+- One primary role tag chosen from the task's real state.
 - A real deadline only if one exists.
 - An annotation if the future reason or context would not be obvious.
 
-Prefer creating several clear actions over one vague task.
+Prefer creating several clear actions over one vague task, but do not mark actions `+next` just because they are clear. Reserve `+next` for a deliberately small focus list; use `+asap`, `+blocked`, `+waiting`, or `+someday` when those better describe the state.
 
 ## Refactor Safety
 

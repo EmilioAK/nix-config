@@ -18,11 +18,11 @@ Ask only if the answer would materially change the recommendation.
 Prefer a reasoned recommendation over raw Taskwarrior priority. Consider:
 
 - Real deadline pressure: overdue, due today, due soon.
-- Available `+next` tasks.
-- `+soon` tasks whose scheduled attention date has arrived or whose project needs momentum.
+- Available `+next` tasks, while treating `+next` as the deliberately small focus list.
+- `+asap` tasks whose scheduled attention date has arrived or whose project needs momentum.
 - Stale `+next` tasks that remain relevant.
 - Projects with momentum or a short path to meaningful completion.
-- Important projects with no current `+next` task.
+- Important projects with no clear available action, or where the current focus list should be reconsidered.
 - Inbox items that hide obligations.
 - Blocked tasks where one clarification would unlock progress.
 - Waiting tasks whose `wait` date has passed or which seem neglected.
@@ -36,7 +36,7 @@ Age matters, but old low-value tasks should not automatically beat newer high-va
 When evaluating a project, look for:
 
 - Multiple related tasks under the same project.
-- Clear available next actions.
+- Clear available actions, whether or not they are tagged `+next`.
 - Low friction to restart.
 - Career, university, health, or personal-development value.
 - Staleness or repeated postponement.

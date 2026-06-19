@@ -21,8 +21,8 @@ Example:
 ```text
 project:Work.AzureCert
 "Review current AZ-900 exam outline" +next
-"Complete Microsoft Learn identity module" +next
-"Do one AZ-900 practice test" +next +deep
+"Complete Microsoft Learn identity module" +asap
+"Do one AZ-900 practice test" +asap +deep
 "Book AZ-900 exam" +blocked
 ```
 
@@ -33,15 +33,15 @@ Avoid project names with spaces. Prefer compact names like `Work.AzureCert`, `Un
 Each active non-inbox task should usually have one primary role tag:
 
 - `+inbox`: captured but not shaped.
-- `+next`: concrete and available to do.
-- `+soon`: should stay visible or resurface soon, but is not the current next action.
+- `+next`: deliberately selected as a candidate for the next work block. It is not a synonym for concrete, available, overdue, or important.
+- `+asap`: should stay visible or resurface soon, but is not selected for the current focus list.
 - `+waiting`: blocked on another person, event, or external response.
 - `+blocked`: blocked by unclear scope, missing decision, or internal structure.
 - `+someday`: real but intentionally inactive.
 
 Role tags are the main anti-drift mechanism. They let Codex distinguish actionable work from parked, blocked, or messy work.
 
-Keep `+next` small enough to answer "what should I do now?". Use `+soon` plus `scheduled` for soft resurfacing when a task matters soon but should not compete as an immediate next action.
+Keep `+next` small enough to answer "what should I do now?". Routine triage should not add `+next` automatically. Use `+asap` plus `scheduled` for soft resurfacing when a task matters soon but should not compete as an immediate next action.
 
 ## Optional Shape Tags
 
@@ -81,7 +81,7 @@ Use dependencies sparingly. Prefer project grouping plus role tags unless one ta
 
 ## Good Task Titles
 
-Prefer visible next actions:
+Prefer visible concrete actions:
 
 ```text
 Email professor with specific question about stats assignment part 2
