@@ -8,11 +8,11 @@ report.inbox.labels=ID,Added,Project,Tags,Description
 report.inbox.sort=entry+
 report.inbox.filter=status:pending +inbox
 
-report.focus.description=Ready next, soon, and deadline tasks
+report.focus.description=Ready next, asap, and deadline tasks
 report.focus.columns=id,project,tags,scheduled.countdown,due.relative,urgency,description
 report.focus.labels=ID,Project,Tags,Sch,Due,Urg,Description
 report.focus.sort=urgency-,due+,scheduled+,project+
-report.focus.filter=status:pending +READY -inbox -waiting -blocked -someday ( +next or +soon or +DUE or +OVERDUE )
+report.focus.filter=status:pending +READY -inbox -waiting -blocked -someday ( +next or +asap or +DUE or +OVERDUE )
 
 report.stale.description=Active pending tasks not touched for 14 days
 report.stale.columns=id,modified,project,tags,scheduled,due,description
