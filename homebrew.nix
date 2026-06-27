@@ -50,6 +50,7 @@
     masApps = {
       "Bitwarden" = 1352778147;
       "WhatsApp Messenger" = 310633997;
+      "Xcode" = 497799835;
     };
   };
 }

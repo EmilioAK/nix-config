@@ -37,6 +37,12 @@ trust_level = "trusted"
 [projects."/Users/emilio"]
 trust_level = "trusted"
 
+[projects."/Users/emilio/Downloads"]
+trust_level = "trusted"
+
+[projects."/Users/emilio/Projects/Running"]
+trust_level = "trusted"
+
 [tui.model_availability_nux]
 "gpt-5.5" = 4
 
