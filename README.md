@@ -29,9 +29,22 @@ rolling release (nixpkgs-unstable, nix-darwin master, home-manager master), and
 
 ## Daily use
 
-- `drs` — update flake inputs, rebuild, and commit `flake.lock` on success
-  (restores the lock if the build fails). Defined in
-  `dotfiles/fish/functions/drs.fish`.
+Run `drs` from fish for the normal update/rebuild/maintenance flow. It is
+defined in `dotfiles/fish/functions/drs.fish` and does the following:
+
+1. Updates flake inputs with `nix flake update`.
+2. Rebuilds the current host with `sudo darwin-rebuild switch`.
+3. Lets nix-darwin activation handle Homebrew updates, upgrades, and cleanup
+   from `homebrew.nix`.
+4. Commits `flake.lock` if the rebuild succeeds and the lock changed.
+5. Deletes Nix garbage older than 30 days with
+   `sudo nix-collect-garbage --delete-older-than 30d`.
+
+If the rebuild fails, `drs` restores `flake.lock` and skips cleanup. The 30-day
+GC window keeps recent rollback/build outputs around while preventing the Nix
+store from growing forever. Nix is configured with `auto-optimise-store`, so new
+store paths are deduplicated as they are added. To deduplicate paths that already
+existed before enabling that setting, run `sudo nix store optimise` once.
 
 ## Adding a machine
 

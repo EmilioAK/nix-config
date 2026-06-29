@@ -17,7 +17,10 @@ in {
   };
 
   nix = {
-    settings.experimental-features = "nix-command flakes";
+    settings = {
+      auto-optimise-store = true;
+      experimental-features = "nix-command flakes";
+    };
     extraOptions = ''
       !include /Users/${username}/.config/nix/github-access-token.conf
     '';
