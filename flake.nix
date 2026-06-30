@@ -18,8 +18,8 @@
     inherit (nixpkgs) lib;
 
     workProfiles = map import [
-      ./work/capisoft
-      ./work/thesis
+      ./profiles/work/capisoft
+      ./profiles/uni/thesis
     ];
 
     getWorkModules = field:
@@ -48,8 +48,8 @@
         inherit (cfg) system;
         inherit specialArgs;
         modules = [
-          ./darwin/system.nix
-          ./darwin/homebrew.nix
+          ./modules/darwin/system.nix
+          ./modules/darwin/homebrew.nix
           { networking.hostName = hostname; }
           home-manager.darwinModules.home-manager
           {
@@ -59,8 +59,8 @@
             home-manager.extraSpecialArgs = specialArgs;
             home-manager.users.${cfg.username} = {
               imports = [
-                ./common/home.nix
-                ./darwin/home.nix
+                ./modules/common/home.nix
+                ./modules/darwin/home.nix
               ] ++ getWorkModules "homeModules"
                 ++ (cfg.extraHomeModules or [ ]);
             };
@@ -80,7 +80,7 @@
         inherit (cfg) system;
         inherit specialArgs;
         modules = [
-          ./nixos/system.nix
+          ./modules/nixos/system.nix
           { networking.hostName = hostname; }
           home-manager.nixosModules.home-manager
           {
@@ -90,8 +90,8 @@
             home-manager.extraSpecialArgs = specialArgs;
             home-manager.users.${cfg.username} = {
               imports = [
-                ./common/home.nix
-                ./nixos/home.nix
+                ./modules/common/home.nix
+                ./modules/nixos/home.nix
               ] ++ getWorkModules "homeModules"
                 ++ (cfg.extraHomeModules or [ ]);
             };

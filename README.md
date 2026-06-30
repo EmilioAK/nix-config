@@ -11,7 +11,7 @@ reproduces a known-good state.
 1. Install Nix: <https://nixos.org/download/>
 2. Install Homebrew: <https://brew.sh/>
 3. Sign in to the App Store (required for the `masApps` in
-   `darwin/homebrew.nix`).
+   `modules/darwin/homebrew.nix`).
 4. Clone the repo. It must live at `~/.config/nix-config` because Home Manager
    links dotfiles from that path:
 
@@ -85,7 +85,7 @@ Use the fish helpers in `dotfiles/fish/functions` for normal system work:
 1. Updates flake inputs with `nix flake update`.
 2. Rebuilds the current host with `sudo -H darwin-rebuild switch`.
 3. Lets nix-darwin activation handle Homebrew updates, upgrades, and cleanup
-   from `darwin/homebrew.nix`.
+   from `modules/darwin/homebrew.nix`.
 4. Commits `flake.lock` if the rebuild succeeds and the lock changed.
 5. Deletes Nix garbage older than 30 days with
    `sudo -H nix-collect-garbage --delete-older-than 30d`.
@@ -99,7 +99,7 @@ existed before enabling that setting, run `sudo nix store optimise` once.
 ## Adding a machine
 
 For another Mac, follow the setup steps above. Work profiles are configured
-globally in `flake.nix`, with platform-specific pieces under `work/`.
+globally in `flake.nix`, with platform-specific pieces under `profiles/`.
 
 ## GitHub token
 
