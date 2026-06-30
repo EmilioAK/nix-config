@@ -5,7 +5,7 @@ function drs --description "Update flake inputs, rebuild, commit flake.lock, and
     nix flake update --flake "$flake"
     or return $status
 
-    if sudo darwin-rebuild switch --flake "$flake#$host"
+    if sudo -H darwin-rebuild switch --flake "$flake#$host"
         if not git -C "$flake" diff --quiet -- flake.lock
             git -C "$flake" commit -m "flake.lock: update inputs" -- flake.lock
         end
