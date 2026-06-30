@@ -72,6 +72,46 @@ reproduces a known-good state.
    git push
    ```
 
+## Setup The Hetzner VPS
+
+The `Hetzner-VPS` NixOS host is installed with `nixos-anywhere`. Before
+installing, snapshot any attached Hetzner volumes and confirm the live disk
+layout still matches the declarations in `modules/nixos/hetzner-vps.nix`:
+
+```sh
+ssh vps 'lsblk -f; echo; findmnt -R /mnt'
+```
+
+Then verify the local config:
+
+```sh
+nix eval --no-write-lock-file \
+  "path:$PWD#nixosConfigurations.Hetzner-VPS.config.system.build.toplevel.drvPath"
+
+nix build --dry-run --no-write-lock-file \
+  "path:$PWD#nixosConfigurations.Hetzner-VPS.config.system.build.toplevel"
+```
+
+Install with `nixos-anywhere` from this repo:
+
+```sh
+nix run github:nix-community/nixos-anywhere -- \
+  --flake "path:$PWD#Hetzner-VPS" \
+  --copy-host-keys \
+  vps
+```
+
+The existing `vps` SSH login must have passwordless sudo for the kexec step.
+After the reboot, SSH as `emilio`, clone this repo back to the expected path,
+and run the first NixOS switch from the checked-out repo:
+
+```sh
+mkdir -p ~/.config
+git clone https://github.com/EmilioAK/nix-config ~/.config/nix-config
+cd ~/.config/nix-config
+sudo nixos-rebuild switch --flake "path:$PWD#Hetzner-VPS"
+```
+
 ## Daily use
 
 Use the fish helpers in `dotfiles/fish/functions` for normal system work:

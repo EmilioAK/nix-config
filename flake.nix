@@ -11,9 +11,13 @@
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    disko = {
+      url = "github:nix-community/disko";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
-  outputs = inputs@{ nix-darwin, nixpkgs, home-manager, ... }:
+  outputs = inputs@{ nix-darwin, nixpkgs, home-manager, disko, ... }:
   let
     inherit (nixpkgs) lib;
 
@@ -86,6 +90,7 @@
         modules = [
           ./modules/common/system.nix
           ./modules/nixos/system.nix
+          disko.nixosModules.disko
           { networking.hostName = hostname; }
         ] ++ lib.optionals (cfg.enableHomeManager or true) [
           home-manager.nixosModules.home-manager
