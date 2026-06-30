@@ -1,5 +1,5 @@
 {
-  description = "Emilio's Darwin system";
+  description = "Emilio's systems";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
@@ -13,27 +13,43 @@
     };
   };
 
-  outputs = { nix-darwin, nixpkgs, home-manager, ... }:
+  outputs = inputs@{ nix-darwin, nixpkgs, home-manager, ... }:
   let
     inherit (nixpkgs) lib;
 
-    # Each machine is a tracked file in ./hosts named after its LocalHostName,
-    # e.g. hosts/Emilios-MacBook-Pro.nix. Paths inside a host file are relative
-    # to ./hosts (so work modules are ../work/foo.nix).
-    hostNames = map (lib.removeSuffix ".nix")
-      (builtins.attrNames (builtins.readDir ./hosts));
+    workProfiles = map import [
+      ./work/capisoft
+      ./work/thesis
+    ];
 
-    mkHost = hostname:
+    getWorkModules = field:
+      lib.concatMap (profile: profile.${field} or [ ]) workProfiles;
+
+    # Each machine is a tracked file in ./hosts named after its hostname,
+    # e.g. hosts/Emilios-MacBook-Pro.nix. Host files declare their platform.
+    hostNames = map (lib.removeSuffix ".nix")
+      (lib.filter (lib.hasSuffix ".nix")
+        (builtins.attrNames (builtins.readDir ./hosts)));
+
+    hostConfigs = lib.genAttrs hostNames
+      (hostname: import (./hosts + "/${hostname}.nix"));
+
+    hostsWithPlatform = platform:
+      lib.filterAttrs (_: cfg: cfg.platform == platform) hostConfigs;
+
+    mkDarwinHost = hostname: cfg:
       let
-        cfg = import (./hosts + "/${hostname}.nix");
-        specialArgs = { inherit hostname; inherit (cfg) username; };
+        specialArgs = {
+          inherit hostname inputs;
+          inherit (cfg) username;
+        };
       in
       nix-darwin.lib.darwinSystem {
         inherit (cfg) system;
         inherit specialArgs;
         modules = [
-          ./system.nix
-          ./homebrew.nix
+          ./darwin/system.nix
+          ./darwin/homebrew.nix
           { networking.hostName = hostname; }
           home-manager.darwinModules.home-manager
           {
@@ -41,11 +57,52 @@
             home-manager.useUserPackages = true;
             home-manager.backupFileExtension = "backup";
             home-manager.extraSpecialArgs = specialArgs;
-            home-manager.users.${cfg.username} = import ./home.nix;
+            home-manager.users.${cfg.username} = {
+              imports = [
+                ./common/home.nix
+                ./darwin/home.nix
+              ] ++ getWorkModules "homeModules"
+                ++ (cfg.extraHomeModules or [ ]);
+            };
           }
-        ] ++ (cfg.workModules or [ ]);
+        ] ++ getWorkModules "darwinModules"
+          ++ (cfg.extraSystemModules or [ ]);
+      };
+
+    mkNixosHost = hostname: cfg:
+      let
+        specialArgs = {
+          inherit hostname inputs;
+          inherit (cfg) username;
+        };
+      in
+      nixpkgs.lib.nixosSystem {
+        inherit (cfg) system;
+        inherit specialArgs;
+        modules = [
+          ./nixos/system.nix
+          { networking.hostName = hostname; }
+          home-manager.nixosModules.home-manager
+          {
+            home-manager.useGlobalPkgs = true;
+            home-manager.useUserPackages = true;
+            home-manager.backupFileExtension = "backup";
+            home-manager.extraSpecialArgs = specialArgs;
+            home-manager.users.${cfg.username} = {
+              imports = [
+                ./common/home.nix
+                ./nixos/home.nix
+              ] ++ getWorkModules "homeModules"
+                ++ (cfg.extraHomeModules or [ ]);
+            };
+          }
+        ] ++ getWorkModules "nixosModules"
+          ++ (cfg.extraSystemModules or [ ]);
       };
   in {
-    darwinConfigurations = lib.genAttrs hostNames mkHost;
+    darwinConfigurations = lib.mapAttrs mkDarwinHost
+      (hostsWithPlatform "darwin");
+    nixosConfigurations = lib.mapAttrs mkNixosHost
+      (hostsWithPlatform "nixos");
   };
 }

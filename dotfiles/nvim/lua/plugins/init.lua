@@ -1,6 +1,7 @@
 local function terminal_shell()
-  if (vim.uv or vim.loop).os_uname().sysname == "Darwin" then
-    return { "/opt/homebrew/bin/fish", "--login" }
+  local fish = vim.fn.exepath("fish")
+  if fish ~= "" then
+    return { fish, "--login" }
   end
 
   return { "zsh", "--login" }

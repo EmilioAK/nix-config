@@ -1,2 +1,2 @@
 eval "$(direnv hook zsh)"
-eval "$(/opt/homebrew/bin/starship init zsh)"
+eval "$(starship init zsh)"

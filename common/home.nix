@@ -1,13 +1,35 @@
-{ config, username, ... }:
+{ config, pkgs, username, ... }:
 let
   flakeRoot = "${config.home.homeDirectory}/.config/nix-darwin";
   dotfile = path: config.lib.file.mkOutOfStoreSymlink "${flakeRoot}/dotfiles/${path}";
 in {
   home.username = username;
-  home.homeDirectory = "/Users/${username}";
+  home.homeDirectory =
+    if pkgs.stdenv.isDarwin then "/Users/${username}" else "/home/${username}";
   home.stateVersion = "25.11";
 
   programs.home-manager.enable = true;
+
+  home.packages = with pkgs; [
+    fish
+    git
+    neovim
+    fd
+    fzf
+    lazygit
+    nodejs
+    ripgrep
+    mosh
+    fastfetch
+    starship
+    gh
+    tmux
+    taskwarrior3
+    tasksh
+    codex
+    claude-code
+  ];
+
   programs.ssh = {
     enable = true;
     enableDefaultConfig = false;
@@ -30,14 +52,8 @@ in {
   home.file.".codex/config.toml".source = dotfile "codex/config.toml";
   home.file.".codex/rules/default.rules".source = dotfile "codex/rules/default.rules";
   home.file.".codex/skills".source = dotfile "codex/skills";
-  home.file.".codex/task-manager".source = dotfile "codex/task-manager";
   home.file.".gitconfig".source = dotfile "gitconfig";
-  home.file.".taskrc".source = dotfile "taskrc";
   xdg.configFile."git/ignore".source = dotfile "git/ignore";
-  xdg.configFile."ghostty/config".source = dotfile "ghostty/config";
-  xdg.configFile."fish".source = dotfile "fish";
-  xdg.configFile."aerospace/aerospace.toml".source = dotfile "aerospace/aerospace.toml";
-  xdg.configFile."karabiner/karabiner.json".source = dotfile "karabiner/karabiner.json";
   xdg.configFile."nvim".source = dotfile "nvim";
   xdg.configFile."starship.toml".source = dotfile "starship.toml";
 }

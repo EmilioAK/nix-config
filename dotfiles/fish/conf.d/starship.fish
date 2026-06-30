@@ -1,1 +1,1 @@
-/opt/homebrew/bin/starship init fish | source
+starship init fish | source

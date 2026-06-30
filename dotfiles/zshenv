@@ -1,9 +1,23 @@
 typeset -U path PATH
 
+path=(
+  $HOME/.nix-profile/bin
+  /etc/profiles/per-user/$USER/bin
+  /run/current-system/sw/bin
+  /nix/var/nix/profiles/default/bin
+  $path
+)
+
 if [ -d /opt/homebrew/bin ]; then
-  path=(/opt/homebrew/bin /opt/homebrew/sbin $path)
+  path+=(
+    /opt/homebrew/bin
+    /opt/homebrew/sbin
+  )
 elif [ -d /usr/local/bin ]; then
-  path=(/usr/local/bin /usr/local/sbin $path)
+  path+=(
+    /usr/local/bin
+    /usr/local/sbin
+  )
 fi
 
 export PATH

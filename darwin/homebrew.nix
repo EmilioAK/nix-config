@@ -12,39 +12,20 @@
     taps  = [ "nikitabobko/tap" ];
 
     brews = [
-      "fish"
-      "git"
       "mas"
-      "neovim"
-      "fd"
-      "fzf"
-      "lazygit"
-      "node"
-      "ripgrep"
-      "mosh"
-      "fastfetch"
-      "starship"
-      "gh"
-      "dafny"
-      "tmux"
-      "task"
-      "tasksh"
     ];
 
     casks = [
-      "font-jetbrains-mono-nerd-font"
       "ghostty"
       "nikitabobko/tap/aerospace"
       "karabiner-elements"
       "google-chrome"
       "discord"
-      "codex"
       "element"
       "visual-studio-code"
       "vlc"
       "trezor-suite"
       "obsidian"
-      "claude-code@latest"
     ];
 
     masApps = {

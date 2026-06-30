@@ -1,4 +1,4 @@
-{ username, ... }:
+{ pkgs, username, ... }:
 let
   keyboardLayout = id: name: {
     InputSourceKind = "Keyboard Layout";
@@ -9,6 +9,8 @@ let
   usLayout = keyboardLayout 0 "U.S.";
   swedishProLayout = keyboardLayout 7 "Swedish - Pro";
 in {
+  nixpkgs.config.allowUnfree = true;
+
   system.primaryUser = username;
 
   users.users.${username} = {
@@ -25,6 +27,10 @@ in {
       !include /Users/${username}/.config/nix/github-access-token.conf
     '';
   };
+
+  fonts.packages = [
+    pkgs.nerd-fonts.jetbrains-mono
+  ];
 
   security.pam.services.sudo_local.touchIdAuth = true;
 

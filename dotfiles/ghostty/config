@@ -1,5 +1,5 @@
 keybind = global:ctrl+space=toggle_quick_terminal
-command = /opt/homebrew/bin/fish --login
+command = /etc/profiles/per-user/emilio/bin/fish --login
 background-opacity = 0.9
 background-blur = true
 font-family = "JetBrainsMono Nerd Font Mono"
