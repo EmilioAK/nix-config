@@ -21,25 +21,25 @@ Use this skill for YNAB API work. Treat all YNAB responses as private financial 
 List available plans:
 
 ```bash
-python3 /Users/emilio/.config/nix-darwin/dotfiles/codex/skills/ynab-api/scripts/ynab_request.py GET /plans
+python3 /Users/emilio/.config/nix-config/dotfiles/codex/skills/ynab-api/scripts/ynab_request.py GET /plans
 ```
 
 Get accounts for the last-used plan:
 
 ```bash
-python3 /Users/emilio/.config/nix-darwin/dotfiles/codex/skills/ynab-api/scripts/ynab_request.py GET /plans/last-used/accounts
+python3 /Users/emilio/.config/nix-config/dotfiles/codex/skills/ynab-api/scripts/ynab_request.py GET /plans/last-used/accounts
 ```
 
 Get transactions with query parameters:
 
 ```bash
-python3 /Users/emilio/.config/nix-darwin/dotfiles/codex/skills/ynab-api/scripts/ynab_request.py GET /plans/last-used/transactions --query since_date=2026-06-01
+python3 /Users/emilio/.config/nix-config/dotfiles/codex/skills/ynab-api/scripts/ynab_request.py GET /plans/last-used/transactions --query since_date=2026-06-01
 ```
 
 Run a confirmed write:
 
 ```bash
-python3 /Users/emilio/.config/nix-darwin/dotfiles/codex/skills/ynab-api/scripts/ynab_request.py PATCH /plans/last-used/transactions --json-file payload.json --allow-write
+python3 /Users/emilio/.config/nix-config/dotfiles/codex/skills/ynab-api/scripts/ynab_request.py PATCH /plans/last-used/transactions --json-file payload.json --allow-write
 ```
 
 ## Practical Rules

@@ -1,5 +1,5 @@
 function sup --description "Update flake inputs, switch, commit flake.lock, and collect old Nix garbage"
-    set -l flake "$HOME/.config/nix-darwin"
+    set -l flake "$HOME/.config/nix-config"
     set -l host (scutil --get LocalHostName)
 
     nix flake update --flake "$flake"

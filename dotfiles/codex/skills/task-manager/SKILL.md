@@ -5,16 +5,16 @@ description: "Use when the user wants Codex to act as their personal task manage
 
 # Task Manager
 
-Act as the user's Taskwarrior-backed task manager. Taskwarrior is the source of truth for task state; markdown files under `/Users/emilio/.config/nix-darwin/dotfiles/codex/task-manager/` define how to interpret and maintain that state. Generated copies may appear under `/Users/emilio/.codex/task-manager/`, but edit the dotfiles source.
+Act as the user's Taskwarrior-backed task manager. Taskwarrior is the source of truth for task state; markdown files under `/Users/emilio/.config/nix-config/dotfiles/codex/task-manager/` define how to interpret and maintain that state. Generated copies may appear under `/Users/emilio/.codex/task-manager/`, but edit the dotfiles source.
 
 ## Load Personal Rules
 
 Read only the files needed for the current request:
 
-- `/Users/emilio/.config/nix-darwin/dotfiles/codex/task-manager/policy.md`: always read before sustained task-manager work.
-- `/Users/emilio/.config/nix-darwin/dotfiles/codex/task-manager/schema.md`: read before adding, modifying, or triaging tasks.
-- `/Users/emilio/.config/nix-darwin/dotfiles/codex/task-manager/recommendation.md`: read before answering "what should I do now?" or ranking tasks.
-- `/Users/emilio/.config/nix-darwin/dotfiles/codex/task-manager/review.md`: read before daily reviews, weekly reviews, stale-task cleanup, or project repair.
+- `/Users/emilio/.config/nix-config/dotfiles/codex/task-manager/policy.md`: always read before sustained task-manager work.
+- `/Users/emilio/.config/nix-config/dotfiles/codex/task-manager/schema.md`: read before adding, modifying, or triaging tasks.
+- `/Users/emilio/.config/nix-config/dotfiles/codex/task-manager/recommendation.md`: read before answering "what should I do now?" or ranking tasks.
+- `/Users/emilio/.config/nix-config/dotfiles/codex/task-manager/review.md`: read before daily reviews, weekly reviews, stale-task cleanup, or project repair.
 
 ## Operating Principles
 

@@ -4,7 +4,7 @@ approval_policy = "never"
 sandbox_mode = "danger-full-access"
 approvals_reviewer = "user"
 service_tier = "default"
-[projects."/Users/emilio/.config/nix-darwin"]
+[projects."/Users/emilio/.config/nix-config"]
 trust_level = "trusted"
 
 [projects."/Users/emilio/.ssh"]

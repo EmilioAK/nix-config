@@ -12,14 +12,14 @@ reproduces a known-good state.
 2. Install Homebrew: <https://brew.sh/>
 3. Sign in to the App Store (required for the `masApps` in
    `darwin/homebrew.nix`).
-4. Clone the repo. It must live at `~/.config/nix-darwin` because Home Manager
+4. Clone the repo. It must live at `~/.config/nix-config` because Home Manager
    links dotfiles from that path:
 
    ```sh
    mkdir -p ~/.config
-   git clone https://github.com/EmilioAK/nix-darwin-config ~/.config/nix-darwin
-   cd ~/.config/nix-darwin
-   git remote set-url --push origin git@github.com:EmilioAK/nix-darwin-config.git
+   git clone https://github.com/EmilioAK/nix-config ~/.config/nix-config
+   cd ~/.config/nix-config
+   git remote set-url --push origin git@github.com:EmilioAK/nix-config.git
    ```
 
 5. Create this Mac's host file if it does not already exist:
@@ -112,7 +112,7 @@ re-authenticating `gh`, since `gh auth login`/`refresh` rotates the token.
 
 ## Notes / gotchas
 
-- The repo must live at `~/.config/nix-darwin`.
+- The repo must live at `~/.config/nix-config`.
 - First switch: if Nix's installer left an unmanaged `/etc/nix/nix.conf` (or
   `/etc/zshrc`, etc.), activation stops and prints `mv` instructions; follow
   them and re-run the first switch command.
@@ -120,8 +120,8 @@ re-authenticating `gh`, since `gh auth login`/`refresh` rotates the token.
   the token script. The Bitbucket work key
   (`~/.ssh/id_ed25519_bitbucket`) is provisioned manually.
 - Rolling release: roll back a bad update with
-  `git -C ~/.config/nix-darwin checkout <good-commit> -- flake.lock` followed by
-  `sudo -H darwin-rebuild switch --flake ~/.config/nix-darwin#$(scutil --get LocalHostName)`.
+  `git -C ~/.config/nix-config checkout <good-commit> -- flake.lock` followed by
+  `sudo -H darwin-rebuild switch --flake ~/.config/nix-config#$(scutil --get LocalHostName)`.
 
 ## Not tracked
 
