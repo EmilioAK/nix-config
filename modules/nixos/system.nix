@@ -1,10 +1,5 @@
 { username, ... }: {
-  nixpkgs.config.allowUnfree = true;
-
-  nix.settings = {
-    auto-optimise-store = true;
-    experimental-features = [ "nix-command" "flakes" ];
-  };
+  nix.settings.trusted-users = [ "root" "@wheel" ];
 
   users.users.${username} = {
     isNormalUser = true;

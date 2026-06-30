@@ -25,6 +25,9 @@
     getWorkModules = field:
       lib.concatMap (profile: profile.${field} or [ ]) workProfiles;
 
+    getProfileModules = cfg: field:
+      lib.optionals (cfg.includeProfiles or true) (getWorkModules field);
+
     # Each machine is a tracked file in ./hosts named after its hostname,
     # e.g. hosts/Emilios-MacBook-Pro.nix. Host files declare their platform.
     hostNames = map (lib.removeSuffix ".nix")
@@ -48,6 +51,7 @@
         inherit (cfg) system;
         inherit specialArgs;
         modules = [
+          ./modules/common/system.nix
           ./modules/darwin/system.nix
           ./modules/darwin/homebrew.nix
           { networking.hostName = hostname; }
@@ -61,11 +65,11 @@
               imports = [
                 ./modules/common/home.nix
                 ./modules/darwin/home.nix
-              ] ++ getWorkModules "homeModules"
+              ] ++ getProfileModules cfg "homeModules"
                 ++ (cfg.extraHomeModules or [ ]);
             };
           }
-        ] ++ getWorkModules "darwinModules"
+        ] ++ getProfileModules cfg "darwinModules"
           ++ (cfg.extraSystemModules or [ ]);
       };
 
@@ -80,8 +84,10 @@
         inherit (cfg) system;
         inherit specialArgs;
         modules = [
+          ./modules/common/system.nix
           ./modules/nixos/system.nix
           { networking.hostName = hostname; }
+        ] ++ lib.optionals (cfg.enableHomeManager or true) [
           home-manager.nixosModules.home-manager
           {
             home-manager.useGlobalPkgs = true;
@@ -92,11 +98,11 @@
               imports = [
                 ./modules/common/home.nix
                 ./modules/nixos/home.nix
-              ] ++ getWorkModules "homeModules"
+              ] ++ getProfileModules cfg "homeModules"
                 ++ (cfg.extraHomeModules or [ ]);
             };
           }
-        ] ++ getWorkModules "nixosModules"
+        ] ++ getProfileModules cfg "nixosModules"
           ++ (cfg.extraSystemModules or [ ]);
       };
   in {

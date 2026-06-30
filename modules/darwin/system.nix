@@ -9,8 +9,6 @@ let
   usLayout = keyboardLayout 0 "U.S.";
   swedishProLayout = keyboardLayout 7 "Swedish - Pro";
 in {
-  nixpkgs.config.allowUnfree = true;
-
   system.primaryUser = username;
 
   users.users.${username} = {
@@ -18,15 +16,9 @@ in {
     home = "/Users/${username}";
   };
 
-  nix = {
-    settings = {
-      auto-optimise-store = true;
-      experimental-features = "nix-command flakes";
-    };
-    extraOptions = ''
-      !include /Users/${username}/.config/nix/github-access-token.conf
-    '';
-  };
+  nix.extraOptions = ''
+    !include /Users/${username}/.config/nix/github-access-token.conf
+  '';
 
   fonts.packages = [
     pkgs.nerd-fonts.jetbrains-mono
