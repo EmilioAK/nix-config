@@ -1,5 +1,5 @@
 {
   homeModules = [ ./home.nix ];
   darwinModules = [ ./darwin.nix ];
-  nixosModules = [ ];
+  nixosModules = [ ./nixos.nix ];
 }

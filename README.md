@@ -74,38 +74,47 @@ reproduces a known-good state.
 
 ## Setup The Hetzner VPS
 
-The `Hetzner-VPS` NixOS host is installed with `nixos-anywhere`. Before
-installing, snapshot any attached Hetzner volumes and confirm the live disk
-layout still matches the declarations in `modules/nixos/hetzner-vps.nix`:
+The `Hetzner-VPS` host is a NixOS system installed from this repo with
+`nixos-anywhere`. Start from any fresh Hetzner VPS image or rescue system where
+SSH works as `root` or as a user with passwordless sudo.
+
+From this repo on your local machine, choose the install target:
 
 ```sh
-ssh vps 'lsblk -f; echo; findmnt -R /mnt'
+cd ~/.config/nix-config
+target=root@<vps-ip>
 ```
 
-Then verify the local config:
+Confirm the remote disk layout before installing. The current config wipes
+`/dev/sda`; the attached data volume, when present, is mounted separately at
+`/mnt/data` by UUID.
+
+```sh
+ssh "$target" 'lsblk -f; echo; findmnt -R /mnt || true'
+```
+
+Verify the local config:
 
 ```sh
 nix eval --no-write-lock-file \
   "path:$PWD#nixosConfigurations.Hetzner-VPS.config.system.build.toplevel.drvPath"
-
 nix build --dry-run --no-write-lock-file \
   "path:$PWD#nixosConfigurations.Hetzner-VPS.config.system.build.toplevel"
 ```
 
-Install with `nixos-anywhere` from this repo:
+Install NixOS:
 
 ```sh
 nix run github:nix-community/nixos-anywhere -- \
   --flake "path:$PWD#Hetzner-VPS" \
-  --copy-host-keys \
-  vps
+  "$target"
 ```
 
-The existing `vps` SSH login must have passwordless sudo for the kexec step.
-After the reboot, SSH as `emilio`, clone this repo back to the expected path,
-and run the first NixOS switch from the checked-out repo:
+After the reboot, SSH in as `emilio`, clone the repo to its expected path, and
+switch once from the checked-out repo:
 
 ```sh
+ssh emilio@<vps-ip>
 mkdir -p ~/.config
 git clone https://github.com/EmilioAK/nix-config ~/.config/nix-config
 cd ~/.config/nix-config

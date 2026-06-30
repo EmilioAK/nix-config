@@ -21,7 +21,27 @@
     "virtio_scsi"
   ];
 
-  networking.useDHCP = lib.mkDefault true;
+  networking = {
+    useDHCP = lib.mkDefault false;
+    interfaces.eth0 = {
+      useDHCP = lib.mkDefault true;
+      ipv6.addresses = [
+        {
+          address = "2a01:4f9:c014:e9ce::1";
+          prefixLength = 64;
+        }
+      ];
+    };
+    defaultGateway6 = {
+      address = "fe80::1";
+      interface = "eth0";
+    };
+    nameservers = [
+      "2a01:4ff:ff00::add:2"
+      "2a01:4ff:ff00::add:1"
+    ];
+  };
+
   services.qemuGuest.enable = true;
   zramSwap.enable = true;
 
