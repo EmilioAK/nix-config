@@ -1,4 +1,4 @@
-function drs --description "Update flake inputs, rebuild, commit flake.lock, and collect old Nix garbage"
+function sup --description "Update flake inputs, switch, commit flake.lock, and collect old Nix garbage"
     set -l flake "$HOME/.config/nix-darwin"
     set -l host (scutil --get LocalHostName)
 
@@ -10,11 +10,11 @@ function drs --description "Update flake inputs, rebuild, commit flake.lock, and
             git -C "$flake" commit -m "flake.lock: update inputs" -- flake.lock
         end
 
-        echo "drs: collecting Nix garbage older than 30 days"
-        sudo nix-collect-garbage --delete-older-than 30d
+        echo "sup: collecting Nix garbage older than 30 days"
+        sudo -H nix-collect-garbage --delete-older-than 30d
         or return $status
     else
-        echo "drs: switch failed — restoring flake.lock" >&2
+        echo "sup: switch failed; restoring flake.lock" >&2
         git -C "$flake" restore flake.lock
         return 1
     end

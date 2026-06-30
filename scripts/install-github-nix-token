@@ -7,7 +7,7 @@ nix_conf="$config_dir/nix.conf"
 include_line="!include $token_file"
 
 if ! command -v gh >/dev/null 2>&1; then
-  echo "error: GitHub CLI is not installed. Run the nix-darwin setup first so Homebrew installs gh." >&2
+  echo "error: GitHub CLI is not installed. Install gh temporarily, then re-run this script." >&2
   exit 1
 fi
 
@@ -43,7 +43,7 @@ fi
 
 if nix --extra-experimental-features nix-command config show access-tokens 2>/dev/null | grep -q 'github.com='; then
   echo "Installed GitHub token for Nix at $token_file."
-  echo "For root-run Nix commands before the next switch, use: sudo env NIX_CONFIG=\"$include_line\" ..."
+  echo "For root-run Nix commands before the next switch, use: sudo -H env NIX_CONFIG=\"$include_line\" ..."
 else
   echo "Installed $token_file, but Nix did not report a GitHub token yet." >&2
   echo "Check $nix_conf for the include line, then try: nix config show access-tokens" >&2
