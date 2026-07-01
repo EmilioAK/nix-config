@@ -123,7 +123,7 @@ sudo nixos-rebuild switch --flake "path:$PWD#Hetzner-VPS"
 
 ## Daily use
 
-Use the fish helpers in `dotfiles/fish/functions` for normal system work:
+Use the zsh helpers from the Home Manager zsh config for normal system work:
 
 - `sb`: build the current host without switching.
 - `ssw`: switch the current host without updating inputs.
@@ -135,8 +135,9 @@ Use the fish helpers in `dotfiles/fish/functions` for normal system work:
 2. Rebuilds the current host with `sudo -H darwin-rebuild switch`.
 3. Lets nix-darwin activation handle Homebrew updates, upgrades, and cleanup
    from `modules/darwin/homebrew.nix`.
-4. Commits `flake.lock` if the rebuild succeeds and the lock changed.
-5. Deletes Nix garbage older than 30 days with
+4. Updates zsh plugins with Antidote.
+5. Commits `flake.lock` if the rebuild succeeds and the lock changed.
+6. Deletes Nix garbage older than 30 days with
    `sudo -H nix-collect-garbage --delete-older-than 30d`.
 
 If the rebuild fails, `sup` restores `flake.lock` and skips cleanup. The 30-day
@@ -144,6 +145,10 @@ GC window keeps recent rollback/build outputs around while preventing the Nix
 store from growing forever. Nix is configured with `auto-optimise-store`, so new
 store paths are deduplicated as they are added. To deduplicate paths that already
 existed before enabling that setting, run `sudo nix store optimise` once.
+
+Zsh plugins are loaded by Antidote from `dotfiles/zsh/antidote-*.txt`. The
+manager and bundle list are Nix/Home Manager-managed; cloned plugin checkouts
+live in Antidote's cache and are updated by `sup`.
 
 ## Adding a machine
 
