@@ -11,6 +11,8 @@ let
 in {
   system.primaryUser = username;
 
+  environment.shells = [ pkgs.zsh ];
+
   users.users.${username} = {
     name = username;
     home = "/Users/${username}";
