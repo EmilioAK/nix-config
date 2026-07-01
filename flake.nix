@@ -48,7 +48,7 @@
       let
         specialArgs = {
           inherit hostname inputs;
-          inherit (cfg) username;
+          inherit (cfg) platform username;
         };
       in
       nix-darwin.lib.darwinSystem {
@@ -81,7 +81,7 @@
       let
         specialArgs = {
           inherit hostname inputs;
-          inherit (cfg) username;
+          inherit (cfg) platform username;
         };
       in
       nixpkgs.lib.nixosSystem {
