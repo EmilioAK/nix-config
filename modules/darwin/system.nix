@@ -49,6 +49,10 @@ in {
       "com.apple.TextInputMenu" = {
         visible = true;
       };
+      "com.apple.mail" = {
+        # Mail > Settings > Viewing > Move discarded messages into: Archive.
+        SwipeAction = 1;
+      };
     };
     WindowManager = {
       GloballyEnabled = false;
