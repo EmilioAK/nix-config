@@ -75,51 +75,71 @@ reproduces a known-good state.
 ## Setup The Hetzner VPS
 
 The `nix-vps` host is a NixOS system installed from this repo with
-`nixos-anywhere`. Start from any fresh Hetzner VPS image or rescue system where
-SSH works as `root` or as a user with passwordless sudo.
+`nixos-anywhere`. Start from a Hetzner rescue system where SSH works as `root`.
 
-From this repo on your local machine, choose the install target:
+1. In the Hetzner Cloud Console, enable Rescue for the server, then reboot it.
 
-```sh
-cd ~/.config/nix-config
-target=root@<vps-ip>
-```
+2. From this repo on your local machine, choose the install target:
 
-Confirm the remote disk layout before installing. The current config wipes
-`/dev/sda`; the attached data volume, when present, is mounted separately at
-`/mnt/data` by UUID.
+   ```sh
+   cd ~/.config/nix-config
+   target=root@vps.emilioak.dev
+   ```
 
-```sh
-ssh "$target" 'lsblk -f; echo; findmnt -R /mnt || true'
-```
+3. Confirm the remote disk layout before installing. The current config wipes
+   only `/dev/sda`; the attached data volume is `/dev/sdb` and is mounted
+   separately at `/mnt/data` by UUID.
 
-Verify the local config:
+   ```sh
+   ssh "$target" 'lsblk -f; echo; findmnt -R /mnt || true'
+   ```
 
-```sh
-nix eval --no-write-lock-file \
-  "path:$PWD#nixosConfigurations.nix-vps.config.system.build.toplevel.drvPath"
-nix build --dry-run --no-write-lock-file \
-  "path:$PWD#nixosConfigurations.nix-vps.config.system.build.toplevel"
-```
+4. Verify the local config:
 
-Install NixOS:
+   ```sh
+   nix eval --no-write-lock-file \
+     "path:$PWD#nixosConfigurations.nix-vps.config.system.build.toplevel.drvPath"
+   nix build --dry-run --no-write-lock-file \
+     "path:$PWD#nixosConfigurations.nix-vps.config.system.build.toplevel"
+   ```
 
-```sh
-nix run github:nix-community/nixos-anywhere -- \
-  --flake "path:$PWD#nix-vps" \
-  "$target"
-```
+5. Install NixOS:
 
-After the reboot, SSH in as `emilio`, clone the repo to its expected path, and
-switch once from the checked-out repo:
+   ```sh
+   nix run github:nix-community/nixos-anywhere -- \
+     --build-on remote \
+     --flake "path:$PWD#nix-vps" \
+     --target-host "$target"
+   ```
 
-```sh
-ssh emilio@<vps-ip>
-mkdir -p ~/.config
-git clone https://github.com/EmilioAK/nix-config ~/.config/nix-config
-cd ~/.config/nix-config
-sudo nixos-rebuild switch --flake "path:$PWD#nix-vps"
-```
+6. After the reboot, SSH in as `emilio` and clone the repo to the path Home
+   Manager expects. The repo must live at `~/.config/nix-config` because
+   dotfiles are linked from that path.
+
+   ```sh
+   ssh vps
+   mkdir -p ~/.config
+   git clone https://github.com/EmilioAK/nix-config ~/.config/nix-config
+   cd ~/.config/nix-config
+   git remote set-url --push origin git@github.com:EmilioAK/nix-config.git
+   ```
+
+7. Run the first switch from the checked-out repo, then open a fresh shell:
+
+   ```sh
+   sudo nixos-rebuild switch --flake .#nix-vps
+   exec zsh -l
+   ```
+
+8. Check the expected services and mounts:
+
+   ```sh
+   hostname
+   findmnt /mnt/data
+   systemctl is-active sshd
+   systemctl is-active netbird
+   netbird status
+   ```
 
 ## Daily use
 
@@ -129,12 +149,17 @@ Use the zsh helpers from the Home Manager zsh config for normal system work:
 - `ssw`: switch the current host without updating inputs.
 - `sup`: update inputs, switch, commit `flake.lock`, and collect old garbage.
 
+On macOS the helpers use `darwin-rebuild` and the host name from
+`scutil --get LocalHostName`. On NixOS they use `nixos-rebuild` and the host
+name from `hostname`; for the VPS that means `.#nix-vps`.
+
 `sup` does the following:
 
 1. Updates flake inputs with `nix flake update`.
-2. Rebuilds the current host with `sudo -H darwin-rebuild switch`.
-3. Lets nix-darwin activation handle Homebrew updates, upgrades, and cleanup
-   from `modules/darwin/homebrew.nix`.
+2. Rebuilds the current host with `sudo -H darwin-rebuild switch` on macOS or
+   `sudo -H nixos-rebuild switch` on NixOS.
+3. On macOS, lets nix-darwin activation handle Homebrew updates, upgrades, and
+   cleanup from `modules/darwin/homebrew.nix`.
 4. Updates zsh plugins with Antidote.
 5. Commits `flake.lock` if the rebuild succeeds and the lock changed.
 6. Deletes Nix garbage older than 30 days with
