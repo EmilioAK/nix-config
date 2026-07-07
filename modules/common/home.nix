@@ -256,6 +256,14 @@ in {
   home.file.".codex/skills".source = dotfile "codex/skills";
   home.file.".pi/agent/settings.json".source = dotfile "pi/agent/settings.json";
   home.file.".pi/agent/AGENTS.md".source = dotfile "pi/agent/AGENTS.md";
+  home.file.".pi/agent/skills" = {
+    source = dotfile "pi/agent/skills";
+    force = true;
+  };
+  home.file.".pi/agent/extensions/herdr-agent-state.ts" = {
+    source = dotfile "pi/agent/extensions/herdr-agent-state.ts";
+    force = true;
+  };
   home.file.".gitconfig".source = dotfile "gitconfig";
   xdg.configFile."git/ignore".source = dotfile "git/ignore";
   xdg.configFile."nvim".source = dotfile "nvim";
