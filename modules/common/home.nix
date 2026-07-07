@@ -253,6 +253,8 @@ in {
   home.file.".codex/config.toml".source = dotfile "codex/config.toml";
   home.file.".codex/rules/default.rules".source = dotfile "codex/rules/default.rules";
   home.file.".codex/skills".source = dotfile "codex/skills";
+  home.file.".pi/agent/settings.json".source = dotfile "pi/agent/settings.json";
+  home.file.".pi/agent/AGENTS.md".source = dotfile "pi/agent/AGENTS.md";
   home.file.".gitconfig".source = dotfile "gitconfig";
   xdg.configFile."git/ignore".source = dotfile "git/ignore";
   xdg.configFile."nvim".source = dotfile "nvim";
