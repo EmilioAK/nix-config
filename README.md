@@ -184,8 +184,8 @@ globally in `flake.nix`, with platform-specific pieces under `profiles/`.
 
 `scripts/install-github-nix-token` takes the `gh` CLI token, writes it to
 `~/.config/nix/github-access-token.conf`, and `!include`s it from the user Nix
-config. The nix-darwin system config includes the same token file for root-run
-Nix commands after the next switch. The token file is local-only: it is never
+config. The system config includes the same token file for root-run Nix commands
+after the next switch. The token file is local-only: it is never
 committed and never copied into the Nix store. Re-run the script after
 re-authenticating `gh`, since `gh auth login`/`refresh` rotates the token.
 

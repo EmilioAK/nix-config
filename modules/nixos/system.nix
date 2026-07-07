@@ -1,4 +1,8 @@
 { pkgs, username, ... }: {
+  nix.extraOptions = ''
+    !include /home/${username}/.config/nix/github-access-token.conf
+  '';
+
   nix.settings.trusted-users = [ "root" "@wheel" ];
 
   users.defaultUserShell = pkgs.zsh;
