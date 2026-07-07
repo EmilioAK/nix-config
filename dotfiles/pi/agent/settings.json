@@ -1,5 +1,12 @@
 {
-  "packages": [],
+  "packages": [
+    "npm:@viniraioli/pi-claude-style-tools",
+    "npm:pi-mcp-adapter",
+    "npm:pi-sticky-input",
+    "npm:pi-web-access",
+    "npm:remote-pi",
+    "npm:pi-claude-marketplace"
+  ],
   "lastChangelogVersion": "0.80.3",
   "defaultProvider": "openai-codex",
   "defaultModel": "gpt-5.5",
