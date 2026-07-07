@@ -165,6 +165,53 @@ in {
         }
       ''))
 
+      (lib.mkIf pkgs.stdenv.isLinux (lib.mkOrder 1300 ''
+        sb() {
+          local flake="$HOME/.config/nix-config"
+          local host
+
+          host="$(hostname)" || return $?
+          nixos-rebuild build --flake "$flake#$host"
+        }
+
+        ssw() {
+          local flake="$HOME/.config/nix-config"
+          local host
+
+          host="$(hostname)" || return $?
+          sudo -H nixos-rebuild switch --flake "$flake#$host"
+        }
+
+        sup() {
+          local flake="$HOME/.config/nix-config"
+          local host
+          local zsh_plugin_status=0
+
+          host="$(hostname)" || return $?
+
+          nix flake update --flake "$flake" || return $?
+
+          if sudo -H nixos-rebuild switch --flake "$flake#$host"; then
+            if command -v antidote >/dev/null 2>&1; then
+              echo "sup: updating zsh plugins"
+              antidote update || zsh_plugin_status=$?
+            fi
+
+            if ! git -C "$flake" diff --quiet -- flake.lock; then
+              git -C "$flake" commit -m "flake.lock: update inputs" -- flake.lock
+            fi
+
+            echo "sup: collecting Nix garbage older than 30 days"
+            sudo -H nix-collect-garbage --delete-older-than 30d || return $?
+            return "$zsh_plugin_status"
+          else
+            echo "sup: switch failed; restoring flake.lock" >&2
+            git -C "$flake" restore flake.lock
+            return 1
+          fi
+        }
+      ''))
+
       (lib.mkOrder 1310 ''
         autoload -Uz add-zsh-hook
         typeset -g __auto_ls_last_pwd=""
