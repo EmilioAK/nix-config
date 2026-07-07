@@ -29,6 +29,7 @@ in {
     codex
     claude-code
     pi-coding-agent
+    herdr
     antidote
     nix-zsh-completions
   ];
