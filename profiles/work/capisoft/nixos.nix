@@ -9,45 +9,95 @@ let
       pkgs.iproute2
     ]}
 
-    PUBLIC_IFACE="''${PUBLIC_IFACE:-eth0}"
     RULE_PREF="''${RULE_PREF:-100}"
 
+    get_public_iface() {
+      if [ -n "''${PUBLIC_IFACE:-}" ]; then
+        printf '%s\n' "$PUBLIC_IFACE"
+        return
+      fi
+
+      ip -4 route show default | awk '
+        {
+          for (i = 1; i <= NF; i++) {
+            if ($i == "dev") {
+              print $(i + 1)
+              exit
+            }
+          }
+        }
+      '
+    }
+
     get_public_ipv4() {
-      ip -4 -o addr show dev "$PUBLIC_IFACE" scope global | awk '{split($4, a, "/"); print a[1]; exit}'
+      public_iface="$(get_public_iface)"
+      [ -n "$public_iface" ]
+      ip -4 -o addr show dev "$public_iface" scope global | awk '{split($4, a, "/"); print a[1]; exit}'
+    }
+
+    get_public_ipv6() {
+      public_iface="$(get_public_iface)"
+      [ -n "$public_iface" ]
+      ip -6 -o addr show dev "$public_iface" scope global | awk '{split($4, a, "/"); print a[1]; exit}'
     }
 
     rule_exists() {
-      public_ip="$1"
-      ip rule show | grep -Fq "from ''${public_ip} lookup main"
+      family="$1"
+      public_ip="$2"
+      ip "$family" rule show | grep -Fq "from ''${public_ip} lookup main"
     }
 
     add_rule() {
-      public_ip="$(get_public_ipv4)"
-      [ -n "$public_ip" ]
+      family="$1"
+      prefix="$2"
+      public_ip="$3"
+      [ -n "$public_ip" ] || return 0
 
-      if ! rule_exists "$public_ip"; then
-        ip rule add pref "$RULE_PREF" from "''${public_ip}/32" table main
+      if ! rule_exists "$family" "$public_ip"; then
+        ip "$family" rule add pref "$RULE_PREF" from "''${public_ip}/''${prefix}" table main
       fi
     }
 
-    del_rule() {
-      public_ip="$(get_public_ipv4 || true)"
-      [ -n "''${public_ip:-}" ] || exit 0
+    add_rules() {
+      public_ipv4="$(get_public_ipv4)"
+      [ -n "$public_ipv4" ]
+      add_rule -4 32 "$public_ipv4"
 
-      while rule_exists "$public_ip"; do
-        ip rule del pref "$RULE_PREF" from "''${public_ip}/32" table main || break
+      public_ipv6="$(get_public_ipv6 || true)"
+      add_rule -6 128 "''${public_ipv6:-}"
+    }
+
+    del_rule() {
+      family="$1"
+      prefix="$2"
+      public_ip="$3"
+      [ -n "$public_ip" ] || return 0
+
+      while rule_exists "$family" "$public_ip"; do
+        ip "$family" rule del pref "$RULE_PREF" from "''${public_ip}/''${prefix}" table main || break
       done
+    }
+
+    del_rules() {
+      public_ipv4="$(get_public_ipv4 || true)"
+      del_rule -4 32 "''${public_ipv4:-}"
+
+      public_ipv6="$(get_public_ipv6 || true)"
+      del_rule -6 128 "''${public_ipv6:-}"
     }
 
     case "''${1:-up}" in
       up)
-        add_rule
+        add_rules
         ;;
       down)
-        del_rule
+        del_rules
         ;;
       status)
-        ip rule show | grep "^''${RULE_PREF}:" || true
+        {
+          ip -4 rule show
+          ip -6 rule show
+        } | grep "^''${RULE_PREF}:" || true
         ;;
       *)
         echo "usage: $0 {up|down|status}" >&2
@@ -95,7 +145,7 @@ in {
   };
 
   systemd.services.netbird-public-route = {
-    description = "Keep public IPv4 sourced traffic off the NetBird exit node";
+    description = "Keep public IP sourced traffic off the NetBird exit node";
     after = [
       "network-online.target"
       "netbird.service"
