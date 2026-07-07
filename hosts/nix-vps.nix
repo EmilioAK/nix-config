@@ -5,7 +5,7 @@ in {
   username = "emilio";
   system = "x86_64-linux";
   includeProfiles = false;
-  enableHomeManager = false;
+  enableHomeManager = true;
   extraSystemModules = [
     ../modules/nixos/hetzner-vps.nix
     ../modules/nixos/server.nix
@@ -25,5 +25,7 @@ in {
       };
     })
   ];
-  extraHomeModules = [ ];
+  extraHomeModules = [
+    ../profiles/work/capisoft/home.nix
+  ];
 }

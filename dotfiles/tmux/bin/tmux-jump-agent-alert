@@ -1,0 +1,100 @@
+#!/bin/sh
+current_session=${1:-}
+client=${2:-}
+current_window=${3:-}
+requested_window=${4:-}
+
+show_message() {
+  message=$1
+  if [ -n "$client" ]; then
+    tmux display-message -c "$client" "$message" 2>/dev/null || tmux display-message "$message"
+  else
+    tmux display-message "$message"
+  fi
+}
+
+refresh_all_clients() {
+  tmux list-clients -F '#{client_tty}' 2>/dev/null |
+  while IFS= read -r tmux_client; do
+    [ -n "$tmux_client" ] && tmux refresh-client -t "$tmux_client" -S 2>/dev/null || true
+  done
+}
+
+if [ -n "$requested_window" ]; then
+  target_line=$(
+    tmux list-windows -a -F '#{session_id}	#{window_id}	#{session_name}	#{window_index}	#{window_name}	#{@pi_agent_done}' 2>/dev/null |
+    awk -F '\t' -v target="$requested_window" '
+      $6 != "" && $2 == target {
+        print
+        exit
+      }
+    '
+  )
+else
+  target_line=$(
+    tmux list-windows -a -F '#{session_id}	#{window_id}	#{session_name}	#{window_index}	#{window_name}	#{@pi_agent_done}' 2>/dev/null |
+    awk -F '\t' -v current="$current_session" -v current_window="$current_window" '
+      $6 != "" {
+        if ($3 == current && $2 != current_window && same == "") {
+          same = $0
+        } else if ($3 != current && other == "") {
+          other = $0
+        } else if ($2 == current_window && here == "") {
+          here = $0
+        }
+      }
+      END {
+        if (same != "") {
+          print same
+        } else if (other != "") {
+          print other
+        } else if (here != "") {
+          print here
+        }
+      }
+    '
+  )
+fi
+
+if [ -z "$target_line" ]; then
+  if [ -n "$requested_window" ]; then
+    show_message "Alert is no longer pending"
+  else
+    show_message "No completed Pi windows"
+  fi
+  exit 0
+fi
+
+IFS='	' read -r session_id window_id session_name window_index window_name _done <<EOF
+$target_line
+EOF
+
+label="$session_name:$window_index"
+if [ -n "$window_name" ]; then
+  label="$label:$window_name"
+fi
+
+# If the target alert is already under the invoking client, consume it.
+if [ "$window_id" = "$current_window" ]; then
+  tmux set-window-option -q -t "$window_id" -u @pi_agent_done 2>/dev/null || true
+  refresh_all_clients
+  if [ -n "$client" ]; then
+    tmux display-message -c "$client" "Cleared alert for $label" 2>/dev/null || true
+  fi
+  exit 0
+fi
+
+# Select the target window in its session, then move the invoking client there.
+tmux select-window -t "$window_id" 2>/dev/null || exit 1
+if [ -n "$client" ]; then
+  tmux switch-client -c "$client" -t "$session_id" 2>/dev/null || tmux switch-client -t "$session_id" 2>/dev/null || exit 1
+else
+  tmux switch-client -t "$session_id" 2>/dev/null || exit 1
+fi
+
+# The alert has been consumed by jumping to it.
+tmux set-window-option -q -t "$window_id" -u @pi_agent_done 2>/dev/null || true
+refresh_all_clients
+if [ -n "$client" ]; then
+  tmux display-message -c "$client" "Jumped to $label" 2>/dev/null || true
+fi

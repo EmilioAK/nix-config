@@ -67,7 +67,6 @@ in {
     htop
     jq
     kubectl
-    mosh
     ncdu
     nodejs
     postgresql_16
@@ -79,13 +78,6 @@ in {
     tmux
     uv
     zellij
-  ];
-
-  networking.firewall.allowedUDPPortRanges = [
-    {
-      from = 60000;
-      to = 61000;
-    }
   ];
 
   networking.iproute2 = {

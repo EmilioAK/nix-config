@@ -74,7 +74,7 @@ reproduces a known-good state.
 
 ## Setup The Hetzner VPS
 
-The `Hetzner-VPS` host is a NixOS system installed from this repo with
+The `nix-vps` host is a NixOS system installed from this repo with
 `nixos-anywhere`. Start from any fresh Hetzner VPS image or rescue system where
 SSH works as `root` or as a user with passwordless sudo.
 
@@ -97,16 +97,16 @@ Verify the local config:
 
 ```sh
 nix eval --no-write-lock-file \
-  "path:$PWD#nixosConfigurations.Hetzner-VPS.config.system.build.toplevel.drvPath"
+  "path:$PWD#nixosConfigurations.nix-vps.config.system.build.toplevel.drvPath"
 nix build --dry-run --no-write-lock-file \
-  "path:$PWD#nixosConfigurations.Hetzner-VPS.config.system.build.toplevel"
+  "path:$PWD#nixosConfigurations.nix-vps.config.system.build.toplevel"
 ```
 
 Install NixOS:
 
 ```sh
 nix run github:nix-community/nixos-anywhere -- \
-  --flake "path:$PWD#Hetzner-VPS" \
+  --flake "path:$PWD#nix-vps" \
   "$target"
 ```
 
@@ -118,7 +118,7 @@ ssh emilio@<vps-ip>
 mkdir -p ~/.config
 git clone https://github.com/EmilioAK/nix-config ~/.config/nix-config
 cd ~/.config/nix-config
-sudo nixos-rebuild switch --flake "path:$PWD#Hetzner-VPS"
+sudo nixos-rebuild switch --flake "path:$PWD#nix-vps"
 ```
 
 ## Daily use

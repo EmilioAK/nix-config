@@ -1,6 +1,7 @@
 { pkgs, ... }: {
-  environment.systemPackages = [
-    pkgs.gitMinimal
+  environment.systemPackages = with pkgs; [
+    gitMinimal
+    mosh
   ];
 
   services.openssh = {
@@ -14,7 +15,15 @@
     };
   };
 
-  networking.firewall.enable = true;
+  networking.firewall = {
+    enable = true;
+    allowedUDPPortRanges = [
+      {
+        from = 60000;
+        to = 61000;
+      }
+    ];
+  };
 
   services.journald.extraConfig = ''
     RuntimeMaxUse=100M
