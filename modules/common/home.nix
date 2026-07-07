@@ -28,6 +28,7 @@ in {
     tasksh
     codex
     claude-code
+    pi-coding-agent
     antidote
     nix-zsh-completions
   ];
