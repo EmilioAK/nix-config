@@ -62,6 +62,7 @@ in {
       path=(
         $HOME/.nix-profile/bin
         /etc/profiles/per-user/$USER/bin
+        /run/wrappers/bin
         /run/current-system/sw/bin
         /nix/var/nix/profiles/default/bin
         $path
