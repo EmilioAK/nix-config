@@ -1,4 +1,8 @@
-{ lib, ... }: {
+{ lib, modulesPath, ... }: {
+  imports = [
+    (modulesPath + "/profiles/qemu-guest.nix")
+  ];
+
   boot.loader = {
     efi = {
       canTouchEfiVariables = false;
@@ -6,7 +10,6 @@
     };
     grub = {
       enable = true;
-      device = "nodev";
       efiInstallAsRemovable = true;
       efiSupport = true;
     };
@@ -23,22 +26,21 @@
 
   networking = {
     useDHCP = lib.mkDefault false;
-    interfaces.eth0 = {
-      useDHCP = lib.mkDefault true;
-      ipv6.addresses = [
-        {
-          address = "2a01:4f9:c014:e9ce::1";
-          prefixLength = 64;
-        }
-      ];
-    };
-    defaultGateway6 = {
-      address = "fe80::1";
-      interface = "eth0";
-    };
     nameservers = [
       "2a01:4ff:ff00::add:2"
       "2a01:4ff:ff00::add:1"
+    ];
+  };
+
+  systemd.network.enable = true;
+  systemd.network.networks."30-wan" = {
+    matchConfig.Name = "enp1s0 ens3 eth0";
+    networkConfig.DHCP = "ipv4";
+    address = [
+      "2a01:4f9:c014:e9ce::1/64"
+    ];
+    routes = [
+      { Gateway = "fe80::1"; }
     ];
   };
 
@@ -53,6 +55,11 @@
     content = {
       type = "gpt";
       partitions = {
+        boot = {
+          size = "1M";
+          type = "EF02";
+          priority = 1;
+        };
         ESP = {
           size = "512M";
           type = "EF00";

@@ -4,6 +4,12 @@
     mosh
   ];
 
+  documentation = {
+    doc.enable = false;
+    info.enable = false;
+    nixos.enable = false;
+  };
+
   services.openssh = {
     enable = true;
     openFirewall = true;
