@@ -53,19 +53,25 @@ are for reference/rollback rather than manual installation.
 `nixos-anywhere --extra-files` expects a directory on the machine that runs
 `nixos-anywhere` (usually the laptop), not a path on the target VPS.
 
-Before wiping the VPS, copy the system-state archive to the installer machine:
+Before wiping the VPS, copy the system-state archive to the installer machine.
+The backup directory is root-only on the VPS, so read it through passwordless
+sudo instead of plain `scp`:
 
 ```sh
-scp emilio@<current-vps>:/mnt/data/nixos-migration-backup/20260707-211336/system-state.tar.gz .
+ssh emilio@<current-vps> \
+  'sudo cat /mnt/data/nixos-migration-backup/20260707-211336/system-state.tar.gz' \
+  > system-state.tar.gz
 ```
 
-On the installer machine, prepare a local staging directory outside git:
+On the installer machine, prepare a local staging directory outside git. Extract
+as your normal user so the `nixos-anywhere` process can read the files; they are
+installed as root-owned files on the target.
 
 ```sh
 stage=$PWD/nix-vps-extra-files
 rm -rf "$stage"
 mkdir -p "$stage"
-sudo tar -C "$stage" -xzf system-state.tar.gz \
+tar -C "$stage" -xzf system-state.tar.gz \
   etc/ssh/ssh_host_ecdsa_key \
   etc/ssh/ssh_host_ecdsa_key.pub \
   etc/ssh/ssh_host_ed25519_key \
