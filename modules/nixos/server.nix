@@ -1,6 +1,7 @@
 { pkgs, ... }: {
   environment.systemPackages = with pkgs; [
     gitMinimal
+    ghostty.terminfo
     mosh
   ];
 
