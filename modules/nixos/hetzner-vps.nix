@@ -27,6 +27,8 @@
   networking = {
     useDHCP = lib.mkDefault false;
     nameservers = [
+      "185.12.64.1"
+      "185.12.64.2"
       "2a01:4ff:ff00::add:2"
       "2a01:4ff:ff00::add:1"
     ];
@@ -34,12 +36,17 @@
 
   systemd.network.enable = true;
   systemd.network.networks."30-wan" = {
-    matchConfig.Name = "enp1s0 ens3 eth0";
-    networkConfig.DHCP = "ipv4";
+    matchConfig.Name = "en* eth*";
     address = [
+      "89.167.112.78/32"
       "2a01:4f9:c014:e9ce::1/64"
     ];
     routes = [
+      { Destination = "172.31.1.1/32"; Scope = "link"; }
+      {
+        Gateway = "172.31.1.1";
+        GatewayOnLink = true;
+      }
       { Gateway = "fe80::1"; }
     ];
   };
