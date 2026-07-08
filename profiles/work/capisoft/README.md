@@ -27,8 +27,10 @@ The NixOS module tracks that same behavior declaratively:
 
 - `services.netbird.useRoutingFeatures = "client"` lets NetBird manage the
   outbound client/exit-node routes.
-- `netbird-public-route.service` recreates the public-source policy rule after
-  NetBird starts, for IPv4 and IPv6 when present.
+- `netbird-public-route.service` recreates the public IPv4-source policy rule
+  after NetBird starts.
+- The Hetzner VPS module disables IPv6 so tools such as SSH/Git cannot bypass
+  the NetBird IPv4 exit route by preferring public IPv6.
 - The Hetzner VPS module marks the WAN interface as trusted in the NixOS
   firewall, so public inbound remains open while outbound still defaults to
   NetBird.
@@ -41,5 +43,6 @@ ip rule show
 ip route show table netbird
 ip route get 1.1.1.1
 ip route get 1.1.1.1 from "$(ip -4 -o addr show scope global | awk '!/ wt0/ {split($4, a, "/"); print a[1]; exit}')"
+curl -6 https://api64.ipify.org # expected to fail/no-route
 sudo iptables -S INPUT | sed -n '1,20p'
 ```

@@ -61,7 +61,8 @@ route. The backup notes captured the live rule as:
 The NixOS work profile declares the replacement service/script, so these files
 are for reference/rollback rather than manual installation. Public WAN inbound
 openness is tracked in the Hetzner VPS module by trusting the WAN interface in
-the NixOS firewall.
+the NixOS firewall. IPv6 is disabled on the VPS to avoid Git/SSH preferring the
+public Hetzner IPv6 address and bypassing NetBird IPv4 egress allowlists.
 
 ## Suggested extra-files preparation
 

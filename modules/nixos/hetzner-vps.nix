@@ -26,11 +26,17 @@
 
   networking = {
     useDHCP = lib.mkDefault false;
+    # Bitbucket SSH prefers IPv6 when it is available, but the work VPN/IP
+    # whitelist only covers NetBird IPv4 egress. Disable IPv6 on this VPS so
+    # outbound traffic consistently follows the NetBird IPv4 exit route.
+    enableIPv6 = false;
+    # DNS follows the normal outbound path through NetBird. Hetzner's
+    # link-local resolvers are only reachable on the public WAN path, so use
+    # public resolvers that work from the VPN exit route.
     nameservers = [
-      "185.12.64.1"
-      "185.12.64.2"
-      "2a01:4ff:ff00::add:2"
-      "2a01:4ff:ff00::add:1"
+      "1.1.1.1"
+      "8.8.8.8"
+      "9.9.9.9"
     ];
 
     firewall = {
@@ -45,12 +51,23 @@
     };
   };
 
-  systemd.network.enable = true;
+  systemd.network = {
+    enable = true;
+    config.networkConfig = {
+      # NetBird owns policy rules/routes for VPN egress. Do not let networkd
+      # delete those "foreign" entries when NixOS switches reload networkd.
+      ManageForeignRoutes = false;
+      ManageForeignRoutingPolicyRules = false;
+    };
+  };
   systemd.network.networks."30-wan" = {
     matchConfig.Name = "en* eth*";
+    networkConfig = {
+      IPv6AcceptRA = false;
+      LinkLocalAddressing = "ipv4";
+    };
     address = [
       "89.167.112.78/32"
-      "2a01:4f9:c014:e9ce::1/64"
     ];
     routes = [
       { Destination = "172.31.1.1/32"; Scope = "link"; }
@@ -58,7 +75,6 @@
         Gateway = "172.31.1.1";
         GatewayOnLink = true;
       }
-      { Gateway = "fe80::1"; }
     ];
   };
 
