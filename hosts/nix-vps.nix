@@ -9,6 +9,7 @@ in {
   extraSystemModules = [
     ../modules/nixos/hetzner-vps.nix
     ../modules/nixos/server.nix
+    ../modules/nixos/remote-pi-relay.nix
     ../profiles/work/capisoft/nixos.nix
     ({ username, ... }: {
       programs.fish.enable = true;

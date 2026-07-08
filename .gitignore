@@ -1,2 +1,5 @@
 /result
-/.pi/
+/.pi/*
+!/.pi/remote-pi/
+/.pi/remote-pi/*
+!/.pi/remote-pi/config.json

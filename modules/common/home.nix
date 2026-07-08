@@ -261,6 +261,7 @@ in {
   home.file.".codex/rules/default.rules".source = dotfile "codex/rules/default.rules";
   home.file.".codex/skills".source = dotfile "codex/skills";
   home.file.".pi/agent/settings.json".source = dotfile "pi/agent/settings.json";
+  home.file.".pi/remote/config.json".source = dotfile "pi/remote/config.json";
   home.file.".pi/agent/AGENTS.md".source = dotfile piAgentContextFile;
   home.file.".pi/agent/skills" = {
     source = dotfile "pi/agent/skills";
