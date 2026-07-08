@@ -1,7 +1,13 @@
-{ config, lib, pkgs, username, ... }:
+{ config, lib, pkgs, username, hostname, ... }:
 let
   flakeRoot = "${config.home.homeDirectory}/.config/nix-config";
   dotfile = path: config.lib.file.mkOutOfStoreSymlink "${flakeRoot}/dotfiles/${path}";
+  piAgentContextByHost = {
+    nix-vps = "pi/agent/AGENTS.vps.md";
+    Emilios-MacBook-Pro = "pi/agent/AGENTS.mac.md";
+  };
+  piAgentContextFile =
+    piAgentContextByHost.${hostname} or "pi/agent/AGENTS.default.md";
   zshConfigDir = "${config.xdg.configHome}/zsh";
 in {
   home.username = username;
@@ -255,7 +261,7 @@ in {
   home.file.".codex/rules/default.rules".source = dotfile "codex/rules/default.rules";
   home.file.".codex/skills".source = dotfile "codex/skills";
   home.file.".pi/agent/settings.json".source = dotfile "pi/agent/settings.json";
-  home.file.".pi/agent/AGENTS.md".source = dotfile "pi/agent/AGENTS.md";
+  home.file.".pi/agent/AGENTS.md".source = dotfile piAgentContextFile;
   home.file.".pi/agent/skills" = {
     source = dotfile "pi/agent/skills";
     force = true;
