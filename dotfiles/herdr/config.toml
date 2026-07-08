@@ -1,0 +1,33 @@
+onboarding = false
+
+[keys]
+# Press Ctrl+q, release, then the action key.
+prefix = "ctrl+q"
+
+[[keys.command]]
+key = "prefix+shift+a"
+type = "pane"
+description = "rename focused agent"
+command = '''
+set -eu
+
+herdr_bin="${HERDR_BIN_PATH:-herdr}"
+target="${HERDR_ACTIVE_PANE_ID:-}"
+
+if [ -z "$target" ]; then
+  echo "No active Herdr pane id was provided." >&2
+  exit 1
+fi
+
+printf "New agent label for %s (blank clears): " "$target"
+IFS= read -r name
+
+if [ -n "$name" ]; then
+  "$herdr_bin" agent rename "$target" "$name"
+else
+  "$herdr_bin" agent rename "$target" --clear
+fi
+'''
+
+[ui]
+agent_panel_sort = "spaces"

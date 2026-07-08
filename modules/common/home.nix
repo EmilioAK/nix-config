@@ -272,6 +272,10 @@ in {
     force = true;
   };
   home.file.".gitconfig".source = dotfile "gitconfig";
+  xdg.configFile."herdr/config.toml" = {
+    source = dotfile "herdr/config.toml";
+    force = true;
+  };
   xdg.configFile."git/ignore".source = dotfile "git/ignore";
   xdg.configFile."nvim".source = dotfile "nvim";
   xdg.configFile."starship.toml".source = dotfile "starship.toml";
