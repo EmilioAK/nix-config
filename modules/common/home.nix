@@ -276,6 +276,14 @@ in {
     source = dotfile "herdr/config.toml";
     force = true;
   };
+  xdg.configFile."herdr/rename-agent-launch.sh" = {
+    source = dotfile "herdr/rename-agent-launch.sh";
+    force = true;
+  };
+  xdg.configFile."herdr/rename-agent-prompt.sh" = {
+    source = dotfile "herdr/rename-agent-prompt.sh";
+    force = true;
+  };
   xdg.configFile."git/ignore".source = dotfile "git/ignore";
   xdg.configFile."nvim".source = dotfile "nvim";
   xdg.configFile."starship.toml".source = dotfile "starship.toml";

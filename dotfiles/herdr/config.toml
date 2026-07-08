@@ -5,28 +5,20 @@ onboarding = false
 prefix = "ctrl+q"
 
 [[keys.command]]
-key = "prefix+shift+a"
-type = "pane"
+key = "prefix+a"
+type = "shell"
 description = "rename focused agent"
 command = '''
-set -eu
+sh "${XDG_CONFIG_HOME:-$HOME/.config}/herdr/rename-agent-launch.sh"
+'''
 
-herdr_bin="${HERDR_BIN_PATH:-herdr}"
-target="${HERDR_ACTIVE_PANE_ID:-}"
-
-if [ -z "$target" ]; then
-  echo "No active Herdr pane id was provided." >&2
-  exit 1
-fi
-
-printf "New agent label for %s (blank clears): " "$target"
-IFS= read -r name
-
-if [ -n "$name" ]; then
-  "$herdr_bin" agent rename "$target" "$name"
-else
-  "$herdr_bin" agent rename "$target" --clear
-fi
+# Backup direct shortcut in case Ctrl+q is swallowed by the terminal/TTY.
+[[keys.command]]
+key = "ctrl+alt+r"
+type = "shell"
+description = "rename focused agent"
+command = '''
+sh "${XDG_CONFIG_HOME:-$HOME/.config}/herdr/rename-agent-launch.sh"
 '''
 
 [ui]
