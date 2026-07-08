@@ -2,7 +2,7 @@
   "packages": [
     "npm:@viniraioli/pi-claude-style-tools",
     "npm:pi-mcp-adapter",
-    "npm:pi-sticky-input",
+    "npm:pi-claude-style-scroll",
     "npm:pi-web-access",
     "npm:remote-pi",
     "npm:pi-claude-marketplace"
