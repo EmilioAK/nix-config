@@ -12,12 +12,34 @@ machine state. On a fresh VPS, enroll it after install:
 sudo netbird up
 ```
 
-The module keeps normal outbound traffic on NetBird while public IPv4 sourced
-traffic uses the Hetzner route. Once NetBird is connected, verify both paths:
+The Ubuntu backup shows the previous routing model was:
+
+- NetBird installed a `netbird` routing table with a default route through
+  `wt0`.
+- Policy rules sent normal outbound traffic through that NetBird table.
+- A local `netbird-public-route` service added a higher-priority rule like
+  `from 89.167.112.78 lookup main`, so replies sourced from the public VPS IP
+  used the Hetzner WAN route instead of the NetBird exit node.
+- Public inbound was not restricted to NetBird; the WAN interface accepted
+  inbound traffic directly.
+
+The NixOS module tracks that same behavior declaratively:
+
+- `services.netbird.useRoutingFeatures = "client"` lets NetBird manage the
+  outbound client/exit-node routes.
+- `netbird-public-route.service` recreates the public-source policy rule after
+  NetBird starts, for IPv4 and IPv6 when present.
+- The Hetzner VPS module marks the WAN interface as trusted in the NixOS
+  firewall, so public inbound remains open while outbound still defaults to
+  NetBird.
+
+Once NetBird is connected, verify both paths:
 
 ```sh
 systemctl status netbird.service netbird-public-route.service
 ip rule show
+ip route show table netbird
 ip route get 1.1.1.1
-ip route get 1.1.1.1 from "$(ip -4 -o addr show dev eth0 scope global | awk '{split($4, a, "/"); print a[1]; exit}')"
+ip route get 1.1.1.1 from "$(ip -4 -o addr show scope global | awk '!/ wt0/ {split($4, a, "/"); print a[1]; exit}')"
+sudo iptables -S INPUT | sed -n '1,20p'
 ```

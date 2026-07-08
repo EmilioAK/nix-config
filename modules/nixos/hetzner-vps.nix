@@ -32,6 +32,17 @@
       "2a01:4ff:ff00::add:2"
       "2a01:4ff:ff00::add:1"
     ];
+
+    firewall = {
+      # Match the pre-Nix VPS behavior: public WAN inbound is open. NetBird
+      # can still own normal outbound/default routing, while the Capisoft
+      # netbird-public-route service keeps replies sourced from the public IP
+      # on the Hetzner main route.
+      trustedInterfaces = [
+        "enp1s0"
+        "eth0"
+      ];
+    };
   };
 
   systemd.network.enable = true;

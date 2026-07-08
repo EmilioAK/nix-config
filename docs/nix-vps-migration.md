@@ -38,15 +38,30 @@ before the new system first starts services:
 
 This keeps SSH host keys stable and lets NetBird reconnect as the existing peer.
 
-The backup also contains reference copies of the old NetBird route fix:
+The backup also contains reference copies of the old Ubuntu NetBird route fix:
 
 ```text
 /etc/systemd/system/netbird-public-route.service
 /usr/local/sbin/netbird-public-route
 ```
 
+The old script set `PUBLIC_IFACE=eth0`, found the public IPv4 address, and added
+policy rule priority `100` as `from <public-ip>/32 lookup main`. Combined with
+NetBird's own rules (`lookup main suppress_prefixlength 0`, then
+`lookup netbird`) this made normal outbound traffic use the NetBird exit route,
+while responses sourced from the public VPS IP used the Hetzner WAN default
+route. The backup notes captured the live rule as:
+
+```text
+100: from 89.167.112.78 lookup main
+105: from all lookup main suppress_prefixlength 0
+110: not from all fwmark 0x1bd00 lookup netbird
+```
+
 The NixOS work profile declares the replacement service/script, so these files
-are for reference/rollback rather than manual installation.
+are for reference/rollback rather than manual installation. Public WAN inbound
+openness is tracked in the Hetzner VPS module by trusting the WAN interface in
+the NixOS firewall.
 
 ## Suggested extra-files preparation
 
