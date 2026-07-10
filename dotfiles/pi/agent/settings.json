@@ -5,7 +5,9 @@
     "npm:pi-claude-style-scroll",
     "npm:pi-web-access",
     "npm:remote-pi",
-    "npm:pi-claude-marketplace"
+    "npm:pi-claude-marketplace",
+    "npm:@aliou/pi-processes",
+    "npm:@narumitw/pi-btw"
   ],
   "lastChangelogVersion": "0.80.3",
   "defaultProvider": "openai-codex",
