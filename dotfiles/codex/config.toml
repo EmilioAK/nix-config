@@ -49,6 +49,9 @@ trust_level = "trusted"
 [projects."/Users/emilio/Projects/Indoor 5K"]
 trust_level = "trusted"
 
+[projects."/home/emilio/.config/nix-config"]
+trust_level = "trusted"
+
 [tui.model_availability_nux]
 "gpt-5.5" = 4
 
@@ -64,3 +67,9 @@ fast_default_opt_out = true
 
 [features]
 hooks = true
+
+[hooks.state]
+
+[hooks.state."/home/emilio/.codex/hooks.json:session_start:0:0"]
+trusted_hash = "sha256:f77ba403a9658bc540fffa73346ee929294cd8e47217a8bd7c2418b5e80deaf0"
+enabled = true

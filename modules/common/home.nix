@@ -2,13 +2,35 @@
 let
   flakeRoot = "${config.home.homeDirectory}/.config/nix-config";
   dotfile = path: config.lib.file.mkOutOfStoreSymlink "${flakeRoot}/dotfiles/${path}";
-  piAgentContextByHost = {
-    nix-vps = "pi/agent/AGENTS.vps.md";
-    Emilios-MacBook-Pro = "pi/agent/AGENTS.mac.md";
+  agentContextByHost = {
+    nix-vps = "agents/AGENTS.vps.md";
+    Emilios-MacBook-Pro = "agents/AGENTS.mac.md";
   };
-  piAgentContextFile =
-    piAgentContextByHost.${hostname} or "pi/agent/AGENTS.default.md";
+  agentContextFile =
+    agentContextByHost.${hostname} or "agents/AGENTS.default.md";
   zshConfigDir = "${config.xdg.configHome}/zsh";
+  # npm CLIs that move faster than nixpkgs. `sup` installs each package at
+  # `version` or `latest` into ~/.local/share/npm and verifies its expected bins.
+  trackedNpmPackages = [
+    {
+      package = "@earendil-works/pi-coding-agent";
+      bins = [ "pi" ];
+    }
+    {
+      package = "@openai/codex";
+      bins = [ "codex" ];
+    }
+    # To move Claude Code to npm later, add:
+    # {
+    #   package = "@anthropic-ai/claude-code";
+    #   bins = [ "claude" ];
+    # }
+  ];
+  trackedNpmPackageSpecs = lib.concatMapStringsSep "\n            "
+    (pkg: builtins.toJSON "${pkg.package}@${pkg.version or "latest"}")
+    trackedNpmPackages;
+  trackedNpmBins = lib.concatMapStringsSep "\n            " builtins.toJSON
+    (lib.concatMap (pkg: pkg.bins or [ ]) trackedNpmPackages);
 in {
   home.username = username;
   home.homeDirectory =
@@ -32,9 +54,7 @@ in {
     tmux
     taskwarrior3
     tasksh
-    codex
     claude-code
-    pi-coding-agent
     herdr
     antidote
     nix-zsh-completions
@@ -68,6 +88,7 @@ in {
       typeset -U path PATH
 
       path=(
+        $HOME/.local/share/npm/bin
         $HOME/.nix-profile/bin
         /etc/profiles/per-user/$USER/bin
         /run/wrappers/bin
@@ -126,6 +147,54 @@ in {
         unfunction __antidote_static_source
       '')
 
+      (lib.mkOrder 1290 ''
+        __sup_update_npm_packages() {
+          local npm_prefix="$HOME/.local/share/npm"
+          local pi_bin="$npm_prefix/bin/pi"
+          local npm_update_status=0
+          local rc
+          local tracked_npm_packages=(
+            ${trackedNpmPackageSpecs}
+          )
+          local tracked_npm_bins=(
+            ${trackedNpmBins}
+          )
+
+          if ! command -v npm >/dev/null 2>&1; then
+            echo "sup: npm not found; skipping tracked npm package updates" >&2
+            return 1
+          fi
+
+          mkdir -p "$npm_prefix" || return $?
+          path=("$npm_prefix/bin" $path)
+
+          if (( ''${#tracked_npm_packages[@]} > 0 )); then
+            echo "sup: updating tracked npm packages"
+            npm install -g --prefix "$npm_prefix" --no-audit --no-fund "''${tracked_npm_packages[@]}" || {
+              rc=$?
+              (( npm_update_status == 0 )) && npm_update_status=$rc
+            }
+          fi
+
+          for bin in "''${tracked_npm_bins[@]}"; do
+            if [ ! -x "$npm_prefix/bin/$bin" ]; then
+              echo "sup: expected npm bin not found: $npm_prefix/bin/$bin" >&2
+              (( npm_update_status == 0 )) && npm_update_status=1
+            fi
+          done
+
+          if [ -x "$pi_bin" ]; then
+            echo "sup: updating Pi packages"
+            (cd "$HOME" && "$pi_bin" update --extensions --no-approve) || {
+              rc=$?
+              (( npm_update_status == 0 )) && npm_update_status=$rc
+            }
+          fi
+
+          return "$npm_update_status"
+        }
+      '')
+
       (lib.mkIf pkgs.stdenv.isDarwin (lib.mkOrder 1300 ''
         sb() {
           local flake="$HOME/.config/nix-config"
@@ -147,6 +216,7 @@ in {
           local flake="$HOME/.config/nix-config"
           local host
           local zsh_plugin_status=0
+          local npm_update_status=0
 
           host="$(scutil --get LocalHostName)" || return $?
 
@@ -158,13 +228,18 @@ in {
               antidote update || zsh_plugin_status=$?
             fi
 
+            __sup_update_npm_packages || npm_update_status=$?
+
             if ! git -C "$flake" diff --quiet -- flake.lock; then
               git -C "$flake" commit -m "flake.lock: update inputs" -- flake.lock
             fi
 
             echo "sup: collecting Nix garbage older than 30 days"
             sudo -H nix-collect-garbage --delete-older-than 30d || return $?
-            return "$zsh_plugin_status"
+            if (( zsh_plugin_status != 0 )); then
+              return "$zsh_plugin_status"
+            fi
+            return "$npm_update_status"
           else
             echo "sup: switch failed; restoring flake.lock" >&2
             git -C "$flake" restore flake.lock
@@ -194,6 +269,7 @@ in {
           local flake="$HOME/.config/nix-config"
           local host
           local zsh_plugin_status=0
+          local npm_update_status=0
 
           host="$(hostname)" || return $?
 
@@ -205,13 +281,18 @@ in {
               antidote update || zsh_plugin_status=$?
             fi
 
+            __sup_update_npm_packages || npm_update_status=$?
+
             if ! git -C "$flake" diff --quiet -- flake.lock; then
               git -C "$flake" commit -m "flake.lock: update inputs" -- flake.lock
             fi
 
             echo "sup: collecting Nix garbage older than 30 days"
             sudo -H nix-collect-garbage --delete-older-than 30d || return $?
-            return "$zsh_plugin_status"
+            if (( zsh_plugin_status != 0 )); then
+              return "$zsh_plugin_status"
+            fi
+            return "$npm_update_status"
           else
             echo "sup: switch failed; restoring flake.lock" >&2
             git -C "$flake" restore flake.lock
@@ -257,8 +338,20 @@ in {
     nix-direnv.enable = true;
   };
 
+  # Shared Agent Skills location. Both Pi and Codex discover ~/.agents/skills.
+  home.file.".agents/skills" = {
+    source = dotfile "agents/skills";
+    force = true;
+  };
+  home.file.".agents/.skill-lock.json" = {
+    source = dotfile "agents/.skill-lock.json";
+    force = true;
+  };
+
+  home.file.".codex/AGENTS.md".source = dotfile agentContextFile;
   home.file.".codex/config.toml".source = dotfile "codex/config.toml";
   home.file.".codex/rules/default.rules".source = dotfile "codex/rules/default.rules";
+  # Codex-only system skills stay here; shared skills live in ~/.agents/skills.
   home.file.".codex/skills".source = dotfile "codex/skills";
   home.file.".claude/settings.json" = {
     source = dotfile "claude/settings.json";
@@ -271,11 +364,7 @@ in {
   };
   home.file.".pi/agent/settings.json".source = dotfile "pi/agent/settings.json";
   home.file.".pi/remote/config.json".source = dotfile "pi/remote/config.json";
-  home.file.".pi/agent/AGENTS.md".source = dotfile piAgentContextFile;
-  home.file.".pi/agent/skills" = {
-    source = dotfile "pi/agent/skills";
-    force = true;
-  };
+  home.file.".pi/agent/AGENTS.md".source = dotfile agentContextFile;
   home.file.".pi/agent/extensions/herdr-agent-state.ts" = {
     source = dotfile "pi/agent/extensions/herdr-agent-state.ts";
     force = true;

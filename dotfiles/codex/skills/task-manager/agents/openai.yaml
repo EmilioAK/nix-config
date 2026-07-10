@@ -1,7 +1,0 @@
-interface:
-  display_name: "Task Manager"
-  short_description: "Manage Taskwarrior tasks with Codex"
-  default_prompt: "Use $task-manager to review my Taskwarrior tasks and tell me what I should do next."
-
-policy:
-  allow_implicit_invocation: true

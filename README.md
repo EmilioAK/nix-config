@@ -147,7 +147,8 @@ Use the zsh helpers from the Home Manager zsh config for normal system work:
 
 - `sb`: build the current host without switching.
 - `ssw`: switch the current host without updating inputs.
-- `sup`: update inputs, switch, commit `flake.lock`, and collect old garbage.
+- `sup`: update inputs, switch, update npm-managed packages, commit `flake.lock`,
+  and collect old garbage.
 
 On macOS the helpers use `darwin-rebuild` and the host name from
 `scutil --get LocalHostName`. On NixOS they use `nixos-rebuild` and the host
@@ -161,19 +162,36 @@ name from `hostname`; for the VPS that means `.#nix-vps`.
 3. On macOS, lets nix-darwin activation handle Homebrew updates, upgrades, and
    cleanup from `modules/darwin/homebrew.nix`.
 4. Updates zsh plugins with Antidote.
-5. Commits `flake.lock` if the rebuild succeeds and the lock changed.
-6. Deletes Nix garbage older than 30 days with
+5. Installs/updates tracked npm CLIs at `~/.local/share/npm` and updates
+   npm-managed Pi packages with `pi update --extensions`.
+6. Commits `flake.lock` if the rebuild succeeds and the lock changed.
+7. Deletes Nix garbage older than 30 days with
    `sudo -H nix-collect-garbage --delete-older-than 30d`.
 
-If the rebuild fails, `sup` restores `flake.lock` and skips cleanup. The 30-day
-GC window keeps recent rollback/build outputs around while preventing the Nix
-store from growing forever. Nix is configured with `auto-optimise-store`, so new
-store paths are deduplicated as they are added. To deduplicate paths that already
-existed before enabling that setting, run `sudo nix store optimise` once.
+If the rebuild fails, `sup` restores `flake.lock` and skips cleanup. If a
+post-switch updater fails, `sup` still runs cleanup but returns a non-zero status.
+The 30-day GC window keeps recent rollback/build outputs around while preventing
+the Nix store from growing forever. Nix is configured with `auto-optimise-store`,
+so new store paths are deduplicated as they are added. To deduplicate paths that
+already existed before enabling that setting, run `sudo nix store optimise` once.
 
 Zsh plugins are loaded by Antidote from `dotfiles/zsh/antidote-*.txt`. The
 manager and bundle list are Nix/Home Manager-managed; cloned plugin checkouts
-live in Antidote's cache and are updated by `sup`.
+live in Antidote's cache and are updated by `sup`. Fast-moving CLIs such as Pi
+and Codex are intentionally managed by npm instead of Nix so `sup` can track
+their latest npm releases. Add more tracked npm CLIs in `trackedNpmPackages` in
+`modules/common/home.nix`.
+
+Shared agent assets live under `dotfiles/agents`:
+
+- `dotfiles/agents/skills` is linked to `~/.agents/skills`, which both Pi and
+  Codex discover.
+- `dotfiles/agents/AGENTS*.md` is linked as both Pi and Codex global
+  instructions so both know the same local policies.
+- Secrets live outside git at `~/.agents/secrets`; `~/.pi/secrets` is kept as a
+  compatibility symlink.
+
+Keep Codex-only system skills under `dotfiles/codex/skills/.system`.
 
 ## Adding a machine
 
