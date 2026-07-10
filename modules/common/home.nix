@@ -359,7 +359,6 @@ in {
   };
   home.file.".claude/hooks/herdr-agent-state.sh" = {
     source = dotfile "claude/hooks/herdr-agent-state.sh";
-    executable = true;
     force = true;
   };
   home.file.".pi/agent/settings.json".source = dotfile "pi/agent/settings.json";
