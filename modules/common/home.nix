@@ -29,6 +29,17 @@ let
   trackedNpmPackageSpecs = lib.concatMapStringsSep "\n            "
     (pkg: builtins.toJSON "${pkg.package}@${pkg.version or "latest"}")
     trackedNpmPackages;
+  trackedNpmPackageEnsureChecks = lib.concatMapStringsSep "\n              "
+    (pkg: ''
+      if ${lib.concatMapStringsSep " || "
+        (bin: ''[ ! -x "$npm_prefix/bin/${bin}" ]'')
+        (pkg.bins or [ ])}; then
+        npm_packages_to_install+=(
+          ${builtins.toJSON "${pkg.package}@${pkg.version or "latest"}"}
+        )
+      fi
+    '')
+    trackedNpmPackages;
   trackedNpmBins = lib.concatMapStringsSep "\n            " builtins.toJSON
     (lib.concatMap (pkg: pkg.bins or [ ]) trackedNpmPackages);
 in {
@@ -148,11 +159,14 @@ in {
       '')
 
       (lib.mkOrder 1290 ''
-        __sup_update_npm_packages() {
+        __sync_tracked_npm_packages() {
+          local mode="$1"
+          local caller="$2"
           local npm_prefix="$HOME/.local/share/npm"
           local pi_bin="$npm_prefix/bin/pi"
           local npm_update_status=0
           local rc
+          local -a npm_packages_to_install
           local tracked_npm_packages=(
             ${trackedNpmPackageSpecs}
           )
@@ -161,16 +175,33 @@ in {
           )
 
           if ! command -v npm >/dev/null 2>&1; then
-            echo "sup: npm not found; skipping tracked npm package updates" >&2
+            echo "$caller: npm not found; skipping tracked npm packages" >&2
             return 1
           fi
 
           mkdir -p "$npm_prefix" || return $?
           path=("$npm_prefix/bin" $path)
 
-          if (( ''${#tracked_npm_packages[@]} > 0 )); then
-            echo "sup: updating tracked npm packages"
-            npm install -g --prefix "$npm_prefix" --no-audit --no-fund "''${tracked_npm_packages[@]}" || {
+          case "$mode" in
+            ensure)
+              ${trackedNpmPackageEnsureChecks}
+              ;;
+            update)
+              npm_packages_to_install=("''${tracked_npm_packages[@]}")
+              ;;
+            *)
+              echo "$caller: unknown tracked npm package mode: $mode" >&2
+              return 2
+              ;;
+          esac
+
+          if (( ''${#npm_packages_to_install[@]} > 0 )); then
+            if [[ "$mode" == update ]]; then
+              echo "$caller: updating tracked npm packages"
+            else
+              echo "$caller: installing missing tracked npm packages"
+            fi
+            npm install -g --prefix "$npm_prefix" --no-audit --no-fund "''${npm_packages_to_install[@]}" || {
               rc=$?
               (( npm_update_status == 0 )) && npm_update_status=$rc
             }
@@ -178,13 +209,13 @@ in {
 
           for bin in "''${tracked_npm_bins[@]}"; do
             if [ ! -x "$npm_prefix/bin/$bin" ]; then
-              echo "sup: expected npm bin not found: $npm_prefix/bin/$bin" >&2
+              echo "$caller: expected npm bin not found: $npm_prefix/bin/$bin" >&2
               (( npm_update_status == 0 )) && npm_update_status=1
             fi
           done
 
-          if [ -x "$pi_bin" ]; then
-            echo "sup: updating Pi packages"
+          if [[ "$mode" == update && -x "$pi_bin" ]]; then
+            echo "$caller: updating Pi packages"
             (cd "$HOME" && "$pi_bin" update --extensions --no-approve) || {
               rc=$?
               (( npm_update_status == 0 )) && npm_update_status=$rc
@@ -209,7 +240,8 @@ in {
           local host
 
           host="$(scutil --get LocalHostName)" || return $?
-          sudo -H darwin-rebuild switch --flake "$flake#$host"
+          sudo -H darwin-rebuild switch --flake "$flake#$host" || return $?
+          __sync_tracked_npm_packages ensure ssw
         }
 
         sup() {
@@ -228,7 +260,7 @@ in {
               antidote update || zsh_plugin_status=$?
             fi
 
-            __sup_update_npm_packages || npm_update_status=$?
+            __sync_tracked_npm_packages update sup || npm_update_status=$?
 
             if ! git -C "$flake" diff --quiet -- flake.lock; then
               git -C "$flake" commit -m "flake.lock: update inputs" -- flake.lock
@@ -262,7 +294,8 @@ in {
           local host
 
           host="$(hostname)" || return $?
-          sudo -H nixos-rebuild switch --flake "$flake#$host"
+          sudo -H nixos-rebuild switch --flake "$flake#$host" || return $?
+          __sync_tracked_npm_packages ensure ssw
         }
 
         sup() {
@@ -281,7 +314,7 @@ in {
               antidote update || zsh_plugin_status=$?
             fi
 
-            __sup_update_npm_packages || npm_update_status=$?
+            __sync_tracked_npm_packages update sup || npm_update_status=$?
 
             if ! git -C "$flake" diff --quiet -- flake.lock; then
               git -C "$flake" commit -m "flake.lock: update inputs" -- flake.lock

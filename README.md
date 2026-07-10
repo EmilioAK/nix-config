@@ -146,7 +146,8 @@ The `nix-vps` host is a NixOS system installed from this repo with
 Use the zsh helpers from the Home Manager zsh config for normal system work:
 
 - `sb`: build the current host without switching.
-- `ssw`: switch the current host without updating inputs.
+- `ssw`: switch the current host without updating inputs, installing any missing
+  tracked npm CLIs after a successful switch.
 - `sup`: update inputs, switch, update npm-managed packages, commit `flake.lock`,
   and collect old garbage.
 
@@ -167,6 +168,11 @@ name from `hostname`; for the VPS that means `.#nix-vps`.
 6. Commits `flake.lock` if the rebuild succeeds and the lock changed.
 7. Deletes Nix garbage older than 30 days with
    `sudo -H nix-collect-garbage --delete-older-than 30d`.
+
+After a successful switch, `ssw` checks the expected binaries for each tracked
+npm CLI and installs only packages whose binaries are missing. It does not
+upgrade packages that are already installed or update Pi extensions; those
+updates remain part of `sup`.
 
 If the rebuild fails, `sup` restores `flake.lock` and skips cleanup. If a
 post-switch updater fails, `sup` still runs cleanup but returns a non-zero status.
