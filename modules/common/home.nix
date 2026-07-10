@@ -260,6 +260,15 @@ in {
   home.file.".codex/config.toml".source = dotfile "codex/config.toml";
   home.file.".codex/rules/default.rules".source = dotfile "codex/rules/default.rules";
   home.file.".codex/skills".source = dotfile "codex/skills";
+  home.file.".claude/settings.json" = {
+    source = dotfile "claude/settings.json";
+    force = true;
+  };
+  home.file.".claude/hooks/herdr-agent-state.sh" = {
+    source = dotfile "claude/hooks/herdr-agent-state.sh";
+    executable = true;
+    force = true;
+  };
   home.file.".pi/agent/settings.json".source = dotfile "pi/agent/settings.json";
   home.file.".pi/remote/config.json".source = dotfile "pi/remote/config.json";
   home.file.".pi/agent/AGENTS.md".source = dotfile piAgentContextFile;
