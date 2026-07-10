@@ -53,6 +53,9 @@ in {
         # Mail > Settings > Viewing > Move discarded messages into: Archive.
         SwipeAction = 1;
       };
+      "com.apple.screencapture" = {
+        target = "clipboard";
+      };
     };
     WindowManager = {
       GloballyEnabled = false;
