@@ -7,11 +7,13 @@
     "npm:remote-pi",
     "npm:pi-claude-marketplace",
     "npm:@aliou/pi-processes",
-    "npm:@narumitw/pi-btw"
+    "npm:@narumitw/pi-btw",
+    "npm:@tifan/pi-recap",
+    "npm:pi-subagents"
   ],
-  "lastChangelogVersion": "0.80.3",
+  "lastChangelogVersion": "0.80.6",
   "defaultProvider": "openai-codex",
-  "defaultModel": "gpt-5.5",
-  "defaultThinkingLevel": "xhigh",
+  "defaultModel": "gpt-5.6-sol",
+  "defaultThinkingLevel": "max",
   "theme": "dark"
 }
