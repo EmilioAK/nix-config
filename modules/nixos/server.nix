@@ -19,6 +19,8 @@
       PasswordAuthentication = false;
       PermitRootLogin = "no";
       X11Forwarding = false;
+      ClientAliveInterval = 60;
+      ClientAliveCountMax = 3;
     };
   };
 

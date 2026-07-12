@@ -8,6 +8,12 @@ let
   };
   agentContextFile =
     agentContextByHost.${hostname} or "agents/AGENTS.default.md";
+  codexConfigByHost = {
+    nix-vps = "codex/config.vps.toml";
+    Emilios-MacBook-Pro = "codex/config.mac.toml";
+  };
+  codexConfigFile = codexConfigByHost.${hostname}
+    or (throw "No Codex config declared for host ${hostname}");
   zshConfigDir = "${config.xdg.configHome}/zsh";
   # npm CLIs that move faster than nixpkgs. `sup` installs each package at
   # `version` or `latest` into ~/.local/share/npm and verifies its expected bins.
@@ -96,6 +102,8 @@ in {
     };
 
     envExtra = ''
+      export NPM_CONFIG_PREFIX="$HOME/.local/share/npm"
+
       typeset -U path PATH
 
       path=(
@@ -360,8 +368,13 @@ in {
     settings = {
       vps = {
         HostName = "vps.emilioak.dev";
+        User = "emilio";
         IdentityFile = "~/.ssh/id_ed25519";
         IdentitiesOnly = "yes";
+        ConnectTimeout = 15;
+        ConnectionAttempts = 3;
+        ServerAliveInterval = 30;
+        ServerAliveCountMax = 3;
       };
     };
   };
@@ -382,7 +395,7 @@ in {
   };
 
   home.file.".codex/AGENTS.md".source = dotfile agentContextFile;
-  home.file.".codex/config.toml".source = dotfile "codex/config.toml";
+  home.file.".codex/config.toml".source = dotfile codexConfigFile;
   home.file.".codex/rules/default.rules".source = dotfile "codex/rules/default.rules";
   # Codex-only system skills stay here; shared skills live in ~/.agents/skills.
   home.file.".codex/skills".source = dotfile "codex/skills";
