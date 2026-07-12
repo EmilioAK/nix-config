@@ -111,7 +111,6 @@ in {
     docker-compose
     fastfetch
     fd
-    fish
     fzf
     gitMinimal
     htop

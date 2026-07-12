@@ -12,8 +12,6 @@ in {
     ../modules/nixos/remote-pi-relay.nix
     ../profiles/work/capisoft/nixos.nix
     ({ username, ... }: {
-      programs.fish.enable = true;
-
       systemd.tmpfiles.rules = [
         "L /home/${username}/Repos - - - - /mnt/data/home/${username}/Repos"
       ];
