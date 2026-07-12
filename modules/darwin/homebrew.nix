@@ -20,6 +20,8 @@
       "nikitabobko/tap/aerospace"
       "karabiner-elements"
       "google-chrome"
+      # Codex desktop app; Homebrew retains the historical cask token.
+      "chatgpt"
       "discord"
       "element"
       "visual-studio-code"
