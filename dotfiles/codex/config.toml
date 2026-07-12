@@ -1,9 +1,11 @@
 model = "gpt-5.6-sol"
-model_reasoning_effort = "max"
+model_reasoning_effort = "xhigh"
 approval_policy = "never"
 sandbox_mode = "danger-full-access"
 approvals_reviewer = "user"
 service_tier = "default"
+
+
 notify = ["/Users/emilio/.codex/computer-use/Codex Computer Use.app/Contents/SharedSupport/SkyComputerUseClient.app/Contents/MacOS/SkyComputerUseClient", "turn-ended"]
 
 [projects."/Users/emilio/.config/nix-config"]
@@ -72,9 +74,27 @@ trust_level = "trusted"
 [projects."/home/emilio"]
 trust_level = "trusted"
 
+[projects."/Users/emilio/Documents/Codex/2026-07-12/if"]
+trust_level = "trusted"
+
+[projects."/Users/emilio/Documents/Codex/2026-07-12/computer-plugin-computer-use-openai-bundled"]
+trust_level = "trusted"
+
+[projects."/Users/emilio/Documents/Codex/2026-07-12/create-a-scheduled-task-called-weekday"]
+trust_level = "trusted"
+
+[projects."/Users/emilio/Documents/Codex/2026-07-12/oka"]
+trust_level = "trusted"
+
+[projects."/Users/emilio/Documents/Codex/2026-07-12/d"]
+trust_level = "trusted"
+
+[projects."/Users/emilio/Documents/Codex/2026-07-12/alr"]
+trust_level = "trusted"
+
 [tui.model_availability_nux]
 "gpt-5.5" = 4
-"gpt-5.6-sol" = 3
+"gpt-5.6-sol" = 4
 
 [plugins."gmail@openai-curated"]
 enabled = true
@@ -89,9 +109,6 @@ enabled = true
 enabled = true
 
 [plugins."visualize@openai-bundled"]
-enabled = true
-
-[plugins."browser@openai-bundled"]
 enabled = true
 
 [plugins."documents@openai-primary-runtime"]
@@ -109,6 +126,15 @@ enabled = true
 [plugins."template-creator@openai-primary-runtime"]
 enabled = true
 
+[plugins."browser@openai-bundled"]
+enabled = true
+
+[plugins."computer-use@openai-bundled"]
+enabled = true
+
+[plugins."chrome@openai-bundled"]
+enabled = true
+
 [notice]
 hide_full_access_warning = true
 fast_default_opt_out = true
@@ -124,7 +150,7 @@ trusted_hash = "sha256:f77ba403a9658bc540fffa73346ee929294cd8e47217a8bd7c2418b5e
 enabled = true
 
 [marketplaces.openai-bundled]
-last_updated = "2026-07-10T19:04:49Z"
+last_updated = "2026-07-12T11:32:39Z"
 source_type = "local"
 source = "/Users/emilio/.codex/.tmp/bundled-marketplaces/openai-bundled"
 
@@ -134,23 +160,24 @@ source_type = "local"
 source = "/Users/emilio/.cache/codex-runtimes/codex-primary-runtime/plugins/openai-primary-runtime"
 
 [mcp_servers.node_repl]
+args = []
 command = "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl"
-startup_timeout_sec = 120.0
+startup_timeout_sec = 120
 
 [mcp_servers.node_repl.env]
-BROWSER_USE_AVAILABLE_BACKENDS = "chrome,iab"
-BROWSER_USE_CODEX_APP_BUILD_FLAVOR = "prod"
-BROWSER_USE_CODEX_APP_VERSION = "26.707.31428"
-CODEX_CLI_PATH = "/Applications/ChatGPT.app/Contents/Resources/codex"
-CODEX_HOME = "/Users/emilio/.codex"
-NODE_REPL_INSTRUCTIONS_USE_CASE_BROWSER = "Control the in-app browser in conjunction with the Browser Plugin."
-NODE_REPL_INSTRUCTIONS_USE_CASE_CHROME = "Control the Chrome browser in conjunction with the Chrome Plugin. Prefer this method of controlling Chrome over alternatives (such as Computer Use) unless the user explicitly mentions an alternative."
-NODE_REPL_INSTRUCTIONS_USE_CASE_COMPUTER_USE = "Control desktop apps on macOS through Computer Use."
 NODE_REPL_NATIVE_PIPE_CONNECT_TIMEOUT_MS = "1000"
 NODE_REPL_NODE_MODULE_DIRS = "/Applications/ChatGPT.app/Contents/Resources/cua_node/lib/node_modules"
 NODE_REPL_NODE_PATH = "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node"
-NODE_REPL_TRUSTED_BROWSER_CLIENT_SHA256S = "6d25aa7656feac858f3a3bdaea5bcbab0dbfd426c9de8e6931ce90c399ee8e4f,c8b7e809d7cf9e20a57123b2530d476ccec9a01a6230a7b2b924fea7d94d7f4a"
 NODE_REPL_TRUSTED_CODE_PATHS = "/Users/emilio/.codex"
+CODEX_HOME = "/Users/emilio/.codex"
+NODE_REPL_TRUSTED_BROWSER_CLIENT_SHA256S = "6d25aa7656feac858f3a3bdaea5bcbab0dbfd426c9de8e6931ce90c399ee8e4f,e74b67ab909392b37f7aef14977fce7aa80cfa02ade5491f30abcdbcb9e69f33"
+BROWSER_USE_AVAILABLE_BACKENDS = "chrome,iab"
+NODE_REPL_INSTRUCTIONS_USE_CASE_BROWSER = "Control the in-app browser in conjunction with the Browser Plugin."
+NODE_REPL_INSTRUCTIONS_USE_CASE_CHROME = "Control the Chrome browser in conjunction with the Chrome Plugin. Prefer this method of controlling Chrome over alternatives (such as Computer Use) unless the user explicitly mentions an alternative."
+NODE_REPL_INSTRUCTIONS_USE_CASE_COMPUTER_USE = "Control desktop apps on macOS through Computer Use."
+BROWSER_USE_CODEX_APP_BUILD_FLAVOR = "prod"
+BROWSER_USE_CODEX_APP_VERSION = "26.707.51957"
+CODEX_CLI_PATH = "/Applications/ChatGPT.app/Contents/Resources/codex"
 
 [mcp_servers.computer-use]
 command = "./Codex Computer Use.app/Contents/SharedSupport/SkyComputerUseClient.app/Contents/MacOS/SkyComputerUseClient"
@@ -164,3 +191,5 @@ url = "https://developers.openai.com/mcp"
 [desktop]
 conversationDetailMode = "STEPS_COMMANDS"
 ambient-suggestions-enabled = true
+followUpQueueMode = "steer"
+show-context-window-usage = true
