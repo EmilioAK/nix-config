@@ -78,6 +78,7 @@ in {
       wvous-tr-corner = 1;
     };
     finder = {
+      AppleShowAllFiles = true;
       AppleShowAllExtensions = true;
       ShowPathbar = true;
       FXPreferredViewStyle = "clmv";  # column view
