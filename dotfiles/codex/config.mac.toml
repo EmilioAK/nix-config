@@ -96,6 +96,18 @@ trust_level = "trusted"
 [projects."/Users/emilio/Documents/Codex/2026-07-12/linear-plugin-linear-openai-curated-remote"]
 trust_level = "trusted"
 
+[projects."/Users/emilio/Documents/Codex/2026-07-12/ca"]
+trust_level = "trusted"
+
+[projects."/Users/emilio/Documents/Codex/2026-07-12/can"]
+trust_level = "trusted"
+
+[projects."/Users/emilio/Documents/Codex/2026-07-12/hatch-pet-users-emilio-config-nix"]
+trust_level = "trusted"
+
+[projects."/Users/emilio/Documents/Codex/2026-07-12/hatch-pet-users-emilio-config-nix-2"]
+trust_level = "trusted"
+
 [tui.model_availability_nux]
 "gpt-5.5" = 4
 "gpt-5.6-sol" = 4
@@ -113,9 +125,6 @@ enabled = true
 enabled = true
 
 [plugins."visualize@openai-bundled"]
-enabled = true
-
-[plugins."browser@openai-bundled"]
 enabled = true
 
 [plugins."computer-use@openai-bundled"]
@@ -139,6 +148,9 @@ enabled = true
 [plugins."template-creator@openai-primary-runtime"]
 enabled = true
 
+[plugins."browser@openai-bundled"]
+enabled = true
+
 [notice]
 hide_full_access_warning = true
 fast_default_opt_out = true
@@ -155,7 +167,7 @@ trusted_hash = "sha256:f77ba403a9658bc540fffa73346ee929294cd8e47217a8bd7c2418b5e
 enabled = true
 
 [marketplaces.openai-bundled]
-last_updated = "2026-07-12T12:50:18Z"
+last_updated = "2026-07-12T13:41:09Z"
 source_type = "local"
 source = "/Users/emilio/.codex/.tmp/bundled-marketplaces/openai-bundled"
 
@@ -170,20 +182,20 @@ command = "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl"
 startup_timeout_sec = 120
 
 [mcp_servers.node_repl.env]
+NODE_REPL_NATIVE_PIPE_CONNECT_TIMEOUT_MS = "1000"
+NODE_REPL_NODE_MODULE_DIRS = "/Applications/ChatGPT.app/Contents/Resources/cua_node/lib/node_modules"
+NODE_REPL_NODE_PATH = "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node"
+NODE_REPL_TRUSTED_CODE_PATHS = "/Users/emilio/.codex"
+CODEX_HOME = "/Users/emilio/.codex"
+NODE_REPL_TRUSTED_BROWSER_CLIENT_SHA256S = "6d25aa7656feac858f3a3bdaea5bcbab0dbfd426c9de8e6931ce90c399ee8e4f,e74b67ab909392b37f7aef14977fce7aa80cfa02ade5491f30abcdbcb9e69f33"
 BROWSER_USE_AVAILABLE_BACKENDS = "chrome,iab"
+NODE_REPL_INSTRUCTIONS_USE_CASE_BROWSER = "Control the in-app browser in conjunction with the Browser Plugin."
+NODE_REPL_INSTRUCTIONS_USE_CASE_CHROME = "Control the Chrome browser in conjunction with the Chrome Plugin. Prefer this method of controlling Chrome over alternatives (such as Computer Use) unless the user explicitly mentions an alternative."
+NODE_REPL_INSTRUCTIONS_USE_CASE_COMPUTER_USE = "Control desktop apps on macOS through Computer Use."
 BROWSER_USE_CODEX_APP_BUILD_FLAVOR = "prod"
 BROWSER_USE_CODEX_APP_VERSION = "26.707.51957"
 SKY_CUA_SERVICE_PATH = "/Users/emilio/.codex/plugins/cache/openai-bundled/computer-use/1.0.1000387/Codex Computer Use.app"
 CODEX_CLI_PATH = "/Applications/ChatGPT.app/Contents/Resources/codex"
-CODEX_HOME = "/Users/emilio/.codex"
-NODE_REPL_INSTRUCTIONS_USE_CASE_BROWSER = "Control the in-app browser in conjunction with the Browser Plugin."
-NODE_REPL_INSTRUCTIONS_USE_CASE_CHROME = "Control the Chrome browser in conjunction with the Chrome Plugin. Prefer this method of controlling Chrome over alternatives (such as Computer Use) unless the user explicitly mentions an alternative."
-NODE_REPL_INSTRUCTIONS_USE_CASE_COMPUTER_USE = "Control desktop apps on macOS through Computer Use."
-NODE_REPL_NATIVE_PIPE_CONNECT_TIMEOUT_MS = "1000"
-NODE_REPL_NODE_MODULE_DIRS = "/Applications/ChatGPT.app/Contents/Resources/cua_node/lib/node_modules"
-NODE_REPL_NODE_PATH = "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node"
-NODE_REPL_TRUSTED_BROWSER_CLIENT_SHA256S = "6d25aa7656feac858f3a3bdaea5bcbab0dbfd426c9de8e6931ce90c399ee8e4f,e74b67ab909392b37f7aef14977fce7aa80cfa02ade5491f30abcdbcb9e69f33"
-NODE_REPL_TRUSTED_CODE_PATHS = "/Users/emilio/.codex"
 
 [mcp_servers.computer-use]
 command = "./Codex Computer Use.app/Contents/SharedSupport/SkyComputerUseClient.app/Contents/MacOS/SkyComputerUseClient"
@@ -199,7 +211,7 @@ conversationDetailMode = "STEPS_COMMANDS"
 ambient-suggestions-enabled = true
 followUpQueueMode = "steer"
 show-context-window-usage = true
-selected-avatar-id = "stacky"
+selected-avatar-id = "codex"
 avatar-overlay-mascot-width-px = 80
 notifications-turn-mode = "always"
 enabled-reasoning-efforts = ["low", "medium", "high", "xhigh", "ultra", "max"]
@@ -208,6 +220,7 @@ computerUseAlwaysHidePictureInPicture = true
 hotkey-window-projectless-default-enabled = false
 usePointerCursors = true
 appearanceTheme = "dark"
+preventSleepWhileRunning = false
 
 [desktop.appearanceLightChromeTheme]
 accent = "#339cff"
