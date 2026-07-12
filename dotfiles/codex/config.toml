@@ -7,6 +7,7 @@ service_tier = "default"
 
 
 notify = ["/Users/emilio/.codex/computer-use/Codex Computer Use.app/Contents/SharedSupport/SkyComputerUseClient.app/Contents/MacOS/SkyComputerUseClient", "turn-ended"]
+personality = "pragmatic"
 
 [projects."/Users/emilio/.config/nix-config"]
 trust_level = "trusted"
@@ -92,6 +93,9 @@ trust_level = "trusted"
 [projects."/Users/emilio/Documents/Codex/2026-07-12/alr"]
 trust_level = "trusted"
 
+[projects."/Users/emilio/Documents/Codex/2026-07-12/linear-plugin-linear-openai-curated-remote"]
+trust_level = "trusted"
+
 [tui.model_availability_nux]
 "gpt-5.5" = 4
 "gpt-5.6-sol" = 4
@@ -126,13 +130,13 @@ enabled = true
 [plugins."template-creator@openai-primary-runtime"]
 enabled = true
 
-[plugins."browser@openai-bundled"]
-enabled = true
-
 [plugins."computer-use@openai-bundled"]
 enabled = true
 
 [plugins."chrome@openai-bundled"]
+enabled = true
+
+[plugins."browser@openai-bundled"]
 enabled = true
 
 [notice]
@@ -142,6 +146,7 @@ fast_default_opt_out = true
 [features]
 hooks = true
 js_repl = false
+memories = true
 
 [hooks.state]
 
@@ -150,7 +155,7 @@ trusted_hash = "sha256:f77ba403a9658bc540fffa73346ee929294cd8e47217a8bd7c2418b5e
 enabled = true
 
 [marketplaces.openai-bundled]
-last_updated = "2026-07-12T11:32:39Z"
+last_updated = "2026-07-12T12:50:18Z"
 source_type = "local"
 source = "/Users/emilio/.codex/.tmp/bundled-marketplaces/openai-bundled"
 
@@ -177,6 +182,7 @@ NODE_REPL_INSTRUCTIONS_USE_CASE_CHROME = "Control the Chrome browser in conjunct
 NODE_REPL_INSTRUCTIONS_USE_CASE_COMPUTER_USE = "Control desktop apps on macOS through Computer Use."
 BROWSER_USE_CODEX_APP_BUILD_FLAVOR = "prod"
 BROWSER_USE_CODEX_APP_VERSION = "26.707.51957"
+SKY_CUA_SERVICE_PATH = "/Users/emilio/.codex/plugins/cache/openai-bundled/computer-use/1.0.1000387/Codex Computer Use.app"
 CODEX_CLI_PATH = "/Applications/ChatGPT.app/Contents/Resources/codex"
 
 [mcp_servers.computer-use]
@@ -193,3 +199,46 @@ conversationDetailMode = "STEPS_COMMANDS"
 ambient-suggestions-enabled = true
 followUpQueueMode = "steer"
 show-context-window-usage = true
+selected-avatar-id = "stacky"
+avatar-overlay-mascot-width-px = 80
+notifications-turn-mode = "always"
+enabled-reasoning-efforts = ["low", "medium", "high", "xhigh", "ultra", "max"]
+show-ultra-in-model-picker-slider = true
+computerUseAlwaysHidePictureInPicture = true
+hotkey-window-projectless-default-enabled = false
+usePointerCursors = true
+appearanceTheme = "dark"
+
+[desktop.appearanceLightChromeTheme]
+accent = "#339cff"
+contrast = 45
+ink = "#1a1c1f"
+opaqueWindows = false
+surface = "#ffffff"
+
+[desktop.appearanceLightChromeTheme.fonts]
+code = "JetBrainsMono Nerd Font"
+
+[desktop.appearanceLightChromeTheme.semanticColors]
+diffAdded = "#00a240"
+diffRemoved = "#ba2623"
+skill = "#924ff7"
+
+[desktop.appearanceDarkChromeTheme]
+accent = "#339cff"
+contrast = 60
+ink = "#ffffff"
+opaqueWindows = false
+surface = "#181818"
+
+[desktop.appearanceDarkChromeTheme.fonts]
+code = "JetBrainsMono Nerd Font"
+
+[desktop.appearanceDarkChromeTheme.semanticColors]
+diffAdded = "#40c977"
+diffRemoved = "#fa423e"
+skill = "#ad7bf9"
+
+[memories]
+generate_memories = true
+use_memories = true
