@@ -13,4 +13,9 @@ in {
     source = capisoftFile "skills/capisoft-jira-tasks";
     force = true;
   };
+
+  home.file.".agents/skills/capisoft-investigate-jira-issue" = {
+    source = capisoftFile "skills/capisoft-investigate-jira-issue";
+    force = true;
+  };
 }

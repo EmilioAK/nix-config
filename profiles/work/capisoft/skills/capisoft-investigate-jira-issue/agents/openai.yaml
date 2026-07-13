@@ -1,0 +1,4 @@
+interface:
+  display_name: "Investigate Capisoft Jira Issue"
+  short_description: "Diagnose Jira issues with read-only evidence"
+  default_prompt: "Use $capisoft-investigate-jira-issue to investigate Task: LP-360 without making changes."

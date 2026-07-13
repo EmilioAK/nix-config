@@ -1,7 +1,7 @@
 #:schema https://developers.openai.com/codex/config-schema.json
 
 model = "gpt-5.6-sol"
-model_reasoning_effort = "high"
+model_reasoning_effort = "max"
 approval_policy = "never"
 sandbox_mode = "danger-full-access"
 approvals_reviewer = "user"
@@ -56,6 +56,9 @@ use_memories = true
 trust_level = "trusted"
 
 [projects."/mnt/data/home/emilio/Repos"]
+trust_level = "trusted"
+
+[projects."/home/emilio/.config/nix-config"]
 trust_level = "trusted"
 
 [tool_suggest]

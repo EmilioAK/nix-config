@@ -1,12 +1,25 @@
 ---
 name: capisoft-jira-tasks
-description: Manage Emilio's Capisoft Jira task system across the personal board "Emilio's Tasks" (board 887), project work assigned to Emilio, and private non-project work in EMILIO. Use when Codex needs to capture, create, inspect, organize, claim, transition, or verify Capisoft work or private Jira tasks; prevent multiple agents from picking up the same issue; decide whether work belongs in its real project or EMILIO; or troubleshoot this board, filter, authentication, or privacy setup.
+description: >-
+  Manage Emilio's Capisoft Jira task system across the personal board "Emilio's
+  Tasks" (board 887), project work assigned to Emilio, and private non-project
+  work in EMILIO. Use when Codex needs to capture, create, inspect, organize,
+  claim, transition, or verify Capisoft work or private Jira tasks; prevent
+  multiple agents from picking up the same issue; decide whether work belongs
+  in its real project or EMILIO; or troubleshoot this board, filter,
+  authentication, or privacy setup. Do not use this skill for a terse
+  "Task: KEY-N" root-cause investigation; use
+  `capisoft-investigate-jira-issue` for that read-only workflow.
 ---
 
 # Capisoft Jira Tasks
 
 Keep all of Emilio's Capisoft work visible on one personal board without moving
 project work out of its real project or exposing private tasks.
+
+A terse prompt such as `Task: LP-360` means a read-only root-cause
+investigation. Defer it to `capisoft-investigate-jira-issue`; do not claim or
+transition the issue under this task-management workflow.
 
 ## Use the canonical setup
 
@@ -63,9 +76,10 @@ review, audit, and explanation requests are read-only.
 ## Claim a task before working
 
 Treat moving an issue to the exact project status `In Progress` as the visible
-claim that substantive agent work has started. A request to implement,
-investigate, or otherwise work on an existing Jira issue authorizes this claim;
-a request only to inspect, explain, plan, triage, or report does not.
+claim that substantive agent work has started. Except for the terse
+`Task: KEY-N` read-only workflow delegated above, a request to implement,
+investigate, or otherwise work on an existing Jira issue authorizes this claim.
+A request only to inspect, explain, plan, triage, or report does not.
 
 1. Fetch the issue immediately before claiming it and inspect its exact status.
 2. Proceed only when that exact status is claimable for the project. Do not use

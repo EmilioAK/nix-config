@@ -21,6 +21,12 @@ Agents receive the detailed workflow through the Capisoft-scoped
 documents scoped-token authentication, safe writes, status transitions, and
 board coverage checks.
 
+Terse issue prompts such as `Task: LP-360` use the separate read-only
+[`capisoft-investigate-jira-issue`](./skills/capisoft-investigate-jira-issue/SKILL.md)
+skill. It checks the Jira report against the current repository and, when the
+cause may depend on the deployed runtime, gathers read-only AWS and
+Rancher/Kubernetes evidence. It never claims, changes, or fixes the issue.
+
 ## NetBird
 
 NetBird is installed by the Capisoft NixOS module, but authentication is local
