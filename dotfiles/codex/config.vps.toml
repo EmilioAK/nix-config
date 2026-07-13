@@ -1,11 +1,12 @@
 #:schema https://developers.openai.com/codex/config-schema.json
 
 model = "gpt-5.6-sol"
-model_reasoning_effort = "xhigh"
+model_reasoning_effort = "high"
 approval_policy = "never"
 sandbox_mode = "danger-full-access"
 approvals_reviewer = "user"
 service_tier = "default"
+personality = "pragmatic"
 
 [tui.model_availability_nux]
 "gpt-5.5" = 4
@@ -17,6 +18,9 @@ enabled = true
 [plugins."github@openai-curated"]
 enabled = true
 
+[plugins."atlassian-rovo@openai-curated"]
+enabled = true
+
 [notice]
 hide_full_access_warning = true
 fast_default_opt_out = true
@@ -24,6 +28,7 @@ fast_default_opt_out = true
 [features]
 hooks = true
 js_repl = false
+memories = true
 
 [hooks.state]
 
@@ -33,3 +38,25 @@ enabled = true
 
 [mcp_servers.openaiDeveloperDocs]
 url = "https://developers.openai.com/mcp"
+
+[mcp_servers.playwright]
+command = "/etc/profiles/per-user/emilio/bin/playwright-mcp"
+args = [
+  "--headless",
+  "--browser", "chromium",
+  "--isolated",
+  "--output-dir", "/home/emilio/.cache/playwright-mcp-output",
+]
+
+[memories]
+generate_memories = true
+use_memories = true
+
+[projects."/mnt/data/home/emilio/Repos/LegalPal"]
+trust_level = "trusted"
+
+[projects."/mnt/data/home/emilio/Repos"]
+trust_level = "trusted"
+
+[tool_suggest]
+disabled_tools = [{ type = "plugin", id = "atlassian-rovo@openai-curated-remote" }]
