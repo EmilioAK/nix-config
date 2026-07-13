@@ -1,6 +1,6 @@
 ---
 name: capisoft-jira-tasks
-description: Manage Emilio's Capisoft Jira task system across the personal board "Emilio's Tasks" (board 887), project work assigned to Emilio, and private non-project work in EMILIO. Use when Codex needs to capture, create, inspect, organize, transition, or verify Capisoft work or private Jira tasks; decide whether work belongs in its real project or EMILIO; or troubleshoot this board, filter, authentication, or privacy setup.
+description: Manage Emilio's Capisoft Jira task system across the personal board "Emilio's Tasks" (board 887), project work assigned to Emilio, and private non-project work in EMILIO. Use when Codex needs to capture, create, inspect, organize, claim, transition, or verify Capisoft work or private Jira tasks; prevent multiple agents from picking up the same issue; decide whether work belongs in its real project or EMILIO; or troubleshoot this board, filter, authentication, or privacy setup.
 ---
 
 # Capisoft Jira Tasks
@@ -59,6 +59,52 @@ Examples:
 
 Create or modify Jira work only when the user requested the write. Status,
 review, audit, and explanation requests are read-only.
+
+## Claim a task before working
+
+Treat moving an issue to the exact project status `In Progress` as the visible
+claim that substantive agent work has started. A request to implement,
+investigate, or otherwise work on an existing Jira issue authorizes this claim;
+a request only to inspect, explain, plan, triage, or report does not.
+
+1. Fetch the issue immediately before claiming it and inspect its exact status.
+2. Proceed only when that exact status is claimable for the project. Do not use
+   `statusCategory` to decide: for example, LP's unstarted `TO DO Urgent` status
+   is currently mapped to Jira's `In Progress` category.
+3. Query the issue's available transitions and transition it to the exact
+   project status `In Progress` before changing code, running a substantive
+   investigation, or making other task-specific mutations.
+4. Record a claim marker in a dedicated agent-claim field when one exists;
+   otherwise add a concise Jira comment. Include the agent surface, a stable
+   task/thread or session identifier when available, and the claim time. Keep
+   the human Jira assignee unchanged unless the user asked to reassign the
+   issue; assignee identifies human responsibility, not which agent currently
+   owns the work.
+5. Re-fetch the issue and begin work only after confirming the exact status and
+   claim marker. If the issue is already claimed, in review, or done, stop and
+   do not duplicate the work.
+
+Use exact claimable statuses per workflow. Known examples are `BACKLOG` and
+`TO DO Urgent` in LP and `To Do` in SAE; revalidate live transitions rather
+than treating this list as permanent. Do not treat `REQUESTS`, review states,
+or any similarly named custom state as claimable without explicit confirmation.
+
+A Jira transition is coordination state, not an atomic mutex. When one
+orchestrator dispatches multiple agents, serialize the claim sequence there.
+Without serialized dispatch, re-read after claiming and stop if another claim
+appeared concurrently; never assume that two near-simultaneous transitions
+could not both succeed.
+
+When work finishes, move the issue to the appropriate review or Done state. If
+work is abandoned or handed off, leave a concise handoff with the repository
+and branch or worktree state, clear the agent-claim field or add a matching
+claim-released comment, and return the issue to the appropriate claimable state
+when safe. Never steal a stale-looking claim; inspect its owner and activity
+and ask before taking it over.
+
+EMILIO currently has no `In Progress` status. Until its workflow is expanded,
+do not use independent agent pickup there. Directly assigned agent work must be
+serialized by one orchestrator and use a claim marker, or remain unstarted.
 
 ## Update and complete tasks
 
