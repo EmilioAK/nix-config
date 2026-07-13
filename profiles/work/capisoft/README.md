@@ -1,7 +1,25 @@
 # Capisoft Profile
 
-This profile contains Capisoft-specific NixOS tooling for the VPS, including
-AWS, Kubernetes, Rancher, Docker, and NetBird.
+This profile contains Capisoft-specific tooling and agent context. Its NixOS
+layer includes AWS, Kubernetes, Rancher, Docker, and NetBird tooling for the
+VPS.
+
+## Jira task system
+
+Use [Emilio's Tasks](https://capi-soft.atlassian.net/jira/people/712020%3A4efdc0dd-f064-49ba-a052-d53890d9f0e6/boards/887)
+as the canonical view of Emilio's Capisoft work.
+
+- Keep work tied to a real project in that project and assign it to Emilio.
+- Put private or projectless work in the private `EMILIO` project.
+- Do not duplicate shared-project issues into `EMILIO`.
+- The board uses `(assignee = currentUser() OR project = EMILIO) ORDER BY Rank ASC`.
+- Verify EMILIO privacy on **Space settings -> Access**, where it must show
+  **Private access**.
+
+Agents receive the detailed workflow through the Capisoft-scoped
+[`capisoft-jira-tasks`](./skills/capisoft-jira-tasks/SKILL.md) skill. It also
+documents scoped-token authentication, safe writes, status transitions, and
+board coverage checks.
 
 ## NetBird
 

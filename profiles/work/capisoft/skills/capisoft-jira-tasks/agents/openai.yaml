@@ -1,0 +1,4 @@
+interface:
+  display_name: "Capisoft Jira Tasks"
+  short_description: "Manage work and private Jira tasks safely"
+  default_prompt: "Use $capisoft-jira-tasks to capture and manage my Capisoft Jira tasks."

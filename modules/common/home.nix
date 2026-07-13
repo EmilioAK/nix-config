@@ -14,6 +14,15 @@ let
   };
   codexConfigFile = codexConfigByHost.${hostname}
     or (throw "No Codex config declared for host ${hostname}");
+  sharedAgentSkillEntries = lib.filterAttrs
+    (_: type: type == "directory" || type == "symlink")
+    (builtins.readDir ../../dotfiles/agents/skills);
+  sharedAgentSkillFiles = lib.mapAttrs'
+    (name: _: lib.nameValuePair ".agents/skills/${name}" {
+      source = dotfile "agents/skills/${name}";
+      force = true;
+    })
+    sharedAgentSkillEntries;
   zshConfigDir = "${config.xdg.configHome}/zsh";
   # npm CLIs that move faster than nixpkgs. `sup` installs each package at
   # `version` or `latest` into ~/.local/share/npm and verifies its expected bins.
@@ -49,6 +58,11 @@ let
   trackedNpmBins = lib.concatMapStringsSep "\n            " builtins.toJSON
     (lib.concatMap (pkg: pkg.bins or [ ]) trackedNpmPackages);
 in {
+  imports = [
+    # Both Pi and Codex discover these alongside profile-scoped skill links.
+    { home.file = sharedAgentSkillFiles; }
+  ];
+
   home.username = username;
   home.homeDirectory =
     if pkgs.stdenv.isDarwin then "/Users/${username}" else "/home/${username}";
@@ -383,11 +397,6 @@ in {
     nix-direnv.enable = true;
   };
 
-  # Shared Agent Skills location. Both Pi and Codex discover ~/.agents/skills.
-  home.file.".agents/skills" = {
-    source = dotfile "agents/skills";
-    force = true;
-  };
   home.file.".agents/.skill-lock.json" = {
     source = dotfile "agents/.skill-lock.json";
     force = true;
