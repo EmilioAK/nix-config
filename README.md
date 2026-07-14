@@ -1,10 +1,10 @@
 # systems
 
-Personal system config. The active machine is managed with nix-darwin,
-home-manager, and Homebrew; NixOS host scaffolding lives alongside it for the
-future VPS. Inputs track rolling release (nixpkgs-unstable, nix-darwin master,
-home-manager master), and `sup` commits `flake.lock` so every machine
-reproduces a known-good state.
+Personal system config. The Mac is managed with nix-darwin, Home Manager, and
+Homebrew; the VPS is managed with NixOS and Home Manager from the same flake.
+Inputs track rolling release (nixpkgs-unstable, nix-darwin master, Home Manager
+master), and `sup` commits `flake.lock` so every machine reproduces a known-good
+state.
 
 ## Setup A New Mac
 
@@ -33,6 +33,7 @@ reproduces a known-good state.
      platform = "darwin";
      username = "$(id -un)";
      system = "$system";
+     profiles = [ "capisoft" "thesis" ];
      extraSystemModules = [ ];
      extraHomeModules = [ ];
    }
@@ -64,7 +65,37 @@ reproduces a known-good state.
    authenticated GitHub requests. The extra `ssw` activates the system/root Nix
    config after the token file exists.
 
-8. Commit and push the new host entry:
+8. Restore the local-only Capisoft state. Copy it from the VPS over an encrypted
+   connection or recreate it with fresh logins; none of it belongs in git:
+
+   - `~/.agents/secrets/`
+   - `~/.ssh/id_ed25519_bitbucket` and its public key
+   - `~/.aws/config`
+   - `~/.kube/config` plus any separate kubeconfig files you still use
+
+   Use mode `0700` for `~/.agents/secrets` and `0600` for private SSH keys. Do
+   not copy AWS login/SSO caches, GitHub token files, `known_hosts`, or the Nix
+   store. Authenticate GitHub with the script above, enroll NetBird as a new
+   machine, refresh AWS/Rancher/Kubernetes credentials, and sign in to Docker,
+   Codex, Pi, Claude, and npm as needed.
+
+9. Launch Docker Desktop once and verify the Capisoft environment:
+
+   ```sh
+   open -a Docker
+   docker info
+   aws configure list-profiles
+   kubectl config get-contexts
+
+   for command in aws docker kubectl psql rancher redis-cli terraform uv; do
+     command -v "$command" || exit 1
+   done
+   ```
+
+10. Clone or transfer the work repositories; Nix installs the development
+    environment but deliberately does not manage project checkouts.
+
+11. Commit and push the new host entry:
 
    ```sh
    git add "hosts/$host.nix"
@@ -190,8 +221,10 @@ their latest npm releases. Add more tracked npm CLIs in `trackedNpmPackages` in
 
 Shared agent assets live under `dotfiles/agents`:
 
-- `dotfiles/agents/skills` is linked to `~/.agents/skills`, which both Pi and
-  Codex discover.
+- `dotfiles/agents/skills` contains generic skills shared by every host.
+- Selected profiles contribute their own skills from their profile directory.
+  Home Manager combines only those sources into the `~/.agents/skills` tree
+  that Pi and Codex discover.
 - `dotfiles/agents/AGENTS*.md` is linked as both Pi and Codex global
   instructions so both know the same local policies.
 - Secrets live outside git at `~/.agents/secrets`; `~/.pi/secrets` is kept as a
@@ -201,8 +234,27 @@ Keep Codex-only system skills under `dotfiles/codex/skills/.system`.
 
 ## Adding a machine
 
-For another Mac, follow the setup steps above. Work profiles are configured
-globally in `flake.nix`, with platform-specific pieces under `profiles/`.
+For another Mac, follow the setup steps above, then list the named profiles the
+host should load. Profiles remain separate under `profiles/`; a host receives
+only the modules and agent skills it explicitly selects:
+
+```nix
+profiles = [ "capisoft" ];
+```
+
+The available profile names are declared in `flake.nix`.
+
+## Capisoft development environment
+
+The portable Capisoft CLI stack is declared in
+`profiles/work/capisoft/home.nix` and is installed on every host selecting the
+`capisoft` profile. It includes AWS CLI, the Docker client and Compose,
+Kubernetes and Rancher clients, Terraform, PostgreSQL and Redis clients, Python,
+`uv`, and supporting terminal tools.
+
+Platform runtimes stay separate: NixOS owns the VPS Docker and NetBird services,
+while macOS installs Docker Desktop and the NetBird app through Homebrew. Their
+authentication and machine enrollment remain local state.
 
 ## GitHub token
 

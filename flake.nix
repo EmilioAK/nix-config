@@ -21,16 +21,19 @@
   let
     inherit (nixpkgs) lib;
 
-    workProfiles = map import [
-      ./profiles/work/capisoft
-      ./profiles/uni/thesis
-    ];
+    profiles = {
+      capisoft = import ./profiles/work/capisoft;
+      thesis = import ./profiles/uni/thesis;
+    };
 
-    getWorkModules = field:
-      lib.concatMap (profile: profile.${field} or [ ]) workProfiles;
+    getSelectedProfiles = cfg:
+      map (name: profiles.${name}
+        or (throw "Unknown profile '${name}'"))
+        (cfg.profiles or [ ]);
 
     getProfileModules = cfg: field:
-      lib.optionals (cfg.includeProfiles or true) (getWorkModules field);
+      lib.concatMap (profile: profile.${field} or [ ])
+        (getSelectedProfiles cfg);
 
     # Each machine is a tracked file in ./hosts named after its hostname,
     # e.g. hosts/Emilios-MacBook-Pro.nix. Host files declare their platform.

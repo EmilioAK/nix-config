@@ -1,8 +1,9 @@
 # Capisoft Profile
 
-This profile contains Capisoft-specific tooling and agent context. Its NixOS
-layer includes AWS, Kubernetes, Rancher, Docker, and NetBird tooling for the
-VPS.
+This profile contains Capisoft-specific tooling and agent context. Its shared
+Home Manager layer installs the AWS, Kubernetes, Rancher, Docker, database, and
+infrastructure CLIs on both the Mac and VPS. The platform layers provide Docker
+and NetBird runtimes: NixOS services on the VPS and macOS apps on the Mac.
 
 ## Jira task system
 

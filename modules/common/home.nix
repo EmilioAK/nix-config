@@ -17,11 +17,8 @@ let
   sharedAgentSkillEntries = lib.filterAttrs
     (_: type: type == "directory" || type == "symlink")
     (builtins.readDir ../../dotfiles/agents/skills);
-  sharedAgentSkillFiles = lib.mapAttrs'
-    (name: _: lib.nameValuePair ".agents/skills/${name}" {
-      source = dotfile "agents/skills/${name}";
-      force = true;
-    })
+  sharedAgentSkillSources = lib.mapAttrs
+    (name: _: "${flakeRoot}/dotfiles/agents/skills/${name}")
     sharedAgentSkillEntries;
   zshConfigDir = "${config.xdg.configHome}/zsh";
   # npm CLIs that move faster than nixpkgs. `sup` installs each package at
@@ -59,9 +56,11 @@ let
     (lib.concatMap (pkg: pkg.bins or [ ]) trackedNpmPackages);
 in {
   imports = [
-    # Both Pi and Codex discover these alongside profile-scoped skill links.
-    { home.file = sharedAgentSkillFiles; }
+    ./agent-skills.nix
   ];
+
+  # Both Pi and Codex discover these alongside explicitly selected profiles.
+  emilio.agentSkills.sources = sharedAgentSkillSources;
 
   home.username = username;
   home.homeDirectory =
