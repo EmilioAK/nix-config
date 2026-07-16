@@ -52,6 +52,9 @@ args = [
 generate_memories = true
 use_memories = true
 
+[tool_suggest]
+disabled_tools = [{ type = "plugin", id = "atlassian-rovo@openai-curated-remote" }]
+
 [projects."/mnt/data/home/emilio/Repos/LegalPal"]
 trust_level = "trusted"
 
@@ -60,6 +63,3 @@ trust_level = "trusted"
 
 [projects."/home/emilio/.config/nix-config"]
 trust_level = "trusted"
-
-[tool_suggest]
-disabled_tools = [{ type = "plugin", id = "atlassian-rovo@openai-curated-remote" }]
