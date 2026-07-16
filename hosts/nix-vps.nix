@@ -17,6 +17,7 @@ in {
 
       users.users.${username} = {
         uid = 1000;
+        linger = true;
         openssh.authorizedKeys.keys = [
           sshKeys.emilio.personal
         ];

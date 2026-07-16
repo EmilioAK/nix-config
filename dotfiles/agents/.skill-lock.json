@@ -18,6 +18,15 @@
       "skillFolderHash": "c8850a2e3e284033142db0f8117fa5998c68bd59",
       "installedAt": "2026-07-10T08:47:47.729Z",
       "updatedAt": "2026-07-10T08:47:47.729Z"
+    },
+    "moshi-best-practices": {
+      "source": "rjyo/moshi-skill",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/rjyo/moshi-skill.git",
+      "skillPath": "skills/moshi-best-practices/SKILL.md",
+      "skillFolderHash": "a48151ac60b4970bf15f09f52c401186f418ff27",
+      "installedAt": "2026-07-16T18:45:53.235Z",
+      "updatedAt": "2026-07-16T18:45:53.235Z"
     }
   },
   "dismissed": {

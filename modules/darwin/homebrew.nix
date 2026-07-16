@@ -9,10 +9,20 @@
       extraFlags = [ "--force-cleanup" ];
     };
 
-    taps  = [ "nikitabobko/tap" ];
+    taps = [
+      "nikitabobko/tap"
+      {
+        name = "rjyo/moshi";
+        trusted = true;
+      }
+    ];
 
     brews = [
       "mas"
+      {
+        name = "rjyo/moshi/moshi-hook";
+        restart_service = "changed";
+      }
     ];
 
     casks = [

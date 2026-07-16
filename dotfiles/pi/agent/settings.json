@@ -9,8 +9,7 @@
     "npm:@aliou/pi-processes",
     "npm:@narumitw/pi-btw",
     "npm:@tifan/pi-recap",
-    "npm:@quintinshaw/pi-dynamic-workflows",
-    "npm:@narumitw/pi-codex-usage"
+    "npm:@quintinshaw/pi-dynamic-workflows"
   ],
   "lastChangelogVersion": "0.80.9",
   "defaultProvider": "openai-codex",

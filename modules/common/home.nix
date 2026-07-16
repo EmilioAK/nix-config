@@ -1,4 +1,4 @@
-{ config, lib, pkgs, username, hostname, ... }:
+{ config, lib, pkgs, inputs, username, hostname, ... }:
 let
   flakeRoot = "${config.home.homeDirectory}/.config/nix-config";
   dotfile = path: config.lib.file.mkOutOfStoreSymlink "${flakeRoot}/dotfiles/${path}";
@@ -84,7 +84,7 @@ in {
     taskwarrior3
     tasksh
     claude-code
-    herdr
+    inputs.herdr.packages.${pkgs.stdenv.hostPlatform.system}.default
     antidote
     nix-zsh-completions
   ];
@@ -119,6 +119,7 @@ in {
       typeset -U path PATH
 
       path=(
+        $HOME/.local/bin
         $HOME/.local/share/npm/bin
         $HOME/.nix-profile/bin
         /etc/profiles/per-user/$USER/bin
@@ -403,13 +404,23 @@ in {
 
   home.file.".codex/AGENTS.md".source = dotfile agentContextFile;
   home.file.".codex/config.toml".source = dotfile codexConfigFile;
+  home.file.".codex/hooks.json" = {
+    source = dotfile "codex/hooks.json";
+    force = true;
+  };
   home.file.".codex/rules/default.rules".source = dotfile "codex/rules/default.rules";
   # Codex-only system skills stay here; shared skills live in ~/.agents/skills.
   home.file.".codex/skills".source = dotfile "codex/skills";
-  home.file.".claude/settings.json" = {
-    source = dotfile "claude/settings.json";
-    force = true;
-  };
+  # Claude Code atomically rewrites settings beside the symlink's immediate
+  # target. Home Manager's normal store indirection makes that directory
+  # read-only, so create a direct, writable out-of-store link instead.
+  home.activation.linkClaudeSettings = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+    settingsPath=${lib.escapeShellArg "${config.home.homeDirectory}/.claude/settings.json"}
+    sourcePath=${lib.escapeShellArg "${flakeRoot}/dotfiles/claude/settings.json"}
+    run mkdir -p "$(${pkgs.coreutils}/bin/dirname "$settingsPath")"
+    run rm -f "$settingsPath"
+    run ln -s "$sourcePath" "$settingsPath"
+  '';
   home.file.".claude/hooks/herdr-agent-state.sh" = {
     source = dotfile "claude/hooks/herdr-agent-state.sh";
     force = true;
@@ -419,6 +430,10 @@ in {
   home.file.".pi/agent/AGENTS.md".source = dotfile agentContextFile;
   home.file.".pi/agent/extensions/herdr-agent-state.ts" = {
     source = dotfile "pi/agent/extensions/herdr-agent-state.ts";
+    force = true;
+  };
+  home.file.".pi/agent/extensions/moshi-hooks.ts" = {
+    source = dotfile "pi/agent/extensions/moshi-hooks.ts";
     force = true;
   };
   home.file.".gitconfig".source = dotfile "gitconfig";
