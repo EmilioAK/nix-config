@@ -2,45 +2,67 @@
 // managed by herdr; reinstalling or updating the integration overwrites this file.
 // add custom hooks/plugins beside this file instead of editing it.
 // HERDR_INTEGRATION_ID=pi
-// HERDR_INTEGRATION_VERSION=3
+// HERDR_INTEGRATION_VERSION=6
 // @ts-nocheck
 
-import { createConnection } from "node:net";
+import net from "node:net";
 
 const HERDR_ENV = process.env.HERDR_ENV;
 const socketPath = process.env.HERDR_SOCKET_PATH;
+const socketEndpoint =
+  process.platform === "win32" && socketPath ? `\\\\.\\pipe\\${socketPath}` : socketPath;
 const paneId = process.env.HERDR_PANE_ID;
 const source = "herdr:pi";
+const activityChannel = "herdr:activity";
+const activityVersion = 1;
 
 function enabled() {
   return HERDR_ENV === "1" && !!socketPath && !!paneId;
 }
 
-function sendRequest(request: unknown): Promise<void> {
+function sendRequestAttempt(request: unknown, timeoutMs: number): Promise<boolean> {
   if (!enabled()) {
-    return Promise.resolve();
+    return Promise.resolve(true);
   }
 
   return new Promise((resolve) => {
     let done = false;
-    const finish = () => {
+    let timeout: ReturnType<typeof setTimeout> | undefined;
+    const finish = (delivered: boolean) => {
       if (done) return;
       done = true;
+      if (timeout) {
+        clearTimeout(timeout);
+      }
       socket.destroy();
-      resolve();
+      resolve(delivered);
     };
 
-    const socket = createConnection(socketPath!);
-    socket.on("error", finish);
+    const socket = net.createConnection(socketEndpoint!);
+    socket.on("error", () => finish(false));
     socket.on("connect", () => socket.write(`${JSON.stringify(request)}\n`));
-    socket.on("data", finish);
-    socket.on("end", finish);
-    const timeout = setTimeout(finish, 500);
+    socket.on("data", () => finish(true));
+    socket.on("end", () => finish(false));
+    timeout = setTimeout(() => finish(false), timeoutMs);
     timeout.unref?.();
   });
 }
 
+async function sendRequest(request: unknown): Promise<void> {
+  if (await sendRequestAttempt(request, 500)) {
+    return;
+  }
+  await sendRequestAttempt(request, 1500);
+}
+
 type AgentState = "working" | "blocked" | "idle";
+type ActivityHold = "working" | "blocked";
+type ActivityRecord = {
+  source: string;
+  id: string;
+  hold: ActivityHold;
+  label?: string;
+};
 
 type QueuedState = {
   state: AgentState;
@@ -110,7 +132,7 @@ function currentSessionRef(): Record<string, unknown> | undefined {
   return undefined;
 }
 
-function reportSession(): Promise<void> {
+function reportSession(sessionStartSource?: string): Promise<void> {
   const sessionRef = currentSessionRef();
   if (!sessionRef) {
     return Promise.resolve();
@@ -124,6 +146,7 @@ function reportSession(): Promise<void> {
       source,
       agent: "pi",
       seq: nextReportSeq(),
+      session_start_source: sessionStartSource,
       ...sessionRef,
     },
   });
@@ -155,6 +178,16 @@ function releaseAgent(): Promise<void> {
       seq: nextReportSeq(),
     },
   });
+}
+
+function shouldReleaseOnSessionShutdown(event: any): boolean {
+  // Pi tears down and rebinds extension runtimes for internal lifecycle actions
+  // such as /reload, /new, /resume, and /fork. Those do not mean the pane's
+  // agent process has exited, and releasing hook authority there can suppress
+  // legitimate reports from the replacement runtime. Only a user/process quit
+  // should release Herdr's full-lifecycle authority.
+  const reason = event?.reason;
+  return reason === "quit";
 }
 
 let sendInFlight = false;
@@ -222,6 +255,7 @@ export default function (pi) {
   let failureMessage: string | undefined;
   let blockedCount = 0;
   let blockedMessage: string | undefined;
+  const activities = new Map<string, ActivityRecord>();
   let lastState: AgentState | undefined;
   let lastMessage: string | undefined;
   let idleTimer: ReturnType<typeof setTimeout> | undefined;
@@ -248,13 +282,15 @@ export default function (pi) {
   }
 
   function desiredState() {
-    if (blockedCount > 0) {
-      return { state: "blocked" as const, message: blockedMessage };
+    const activityBlocker = [...activities.values()].find((activity) => activity.hold === "blocked");
+    if (blockedCount > 0 || activityBlocker) {
+      return { state: "blocked" as const, message: blockedMessage ?? activityBlocker?.label };
     }
     if (failureBlocked) {
       return { state: "blocked" as const, message: failureMessage };
     }
-    if (agentActive || retryHoldActive) {
+    const activityWorking = [...activities.values()].some((activity) => activity.hold === "working");
+    if (agentActive || retryHoldActive || activityWorking) {
       return { state: "working" as const, message: undefined };
     }
     return { state: "idle" as const, message: undefined };
@@ -296,7 +332,72 @@ export default function (pi) {
     retryTimer.unref?.();
   }
 
-  pi.events.on("herdr:blocked", (data) => {
+  function activityKey(activitySource: string, id: string): string {
+    return `${activitySource}\u0000${id}`;
+  }
+
+  function parseActivity(value: unknown, fallbackSource: string): ActivityRecord | undefined {
+    if (!value || typeof value !== "object") return undefined;
+    const record = value as Record<string, unknown>;
+    const activitySource = typeof record.source === "string" ? record.source : fallbackSource;
+    const id = typeof record.id === "string" ? record.id : undefined;
+    const hold = record.hold === "working" || record.hold === "blocked" ? record.hold : undefined;
+    if (!activitySource || !id || !hold) return undefined;
+    return {
+      source: activitySource,
+      id,
+      hold,
+      label: typeof record.label === "string" ? record.label : undefined,
+    };
+  }
+
+  function publishActivityState() {
+    if (!rootSession) return;
+    clearTimer(idleTimer);
+    idleTimer = undefined;
+    if (desiredState().state !== "idle") {
+      publishState();
+      return;
+    }
+    idleTimer = setTimeout(() => {
+      idleTimer = undefined;
+      publishState();
+    }, idleDebounceMs);
+    idleTimer.unref?.();
+  }
+
+  const unsubscribeActivity = pi.events.on(activityChannel, (data) => {
+    if (!data || typeof data !== "object") return;
+    const event = data as Record<string, unknown>;
+    if (event.version !== activityVersion || typeof event.source !== "string") return;
+    const activitySource = event.source;
+
+    if (event.op === "set" && typeof event.id === "string") {
+      const key = activityKey(activitySource, event.id);
+      if (event.hold === "none") {
+        activities.delete(key);
+      } else {
+        const activity = parseActivity(event, activitySource);
+        if (!activity) return;
+        activities.set(key, activity);
+      }
+      publishActivityState();
+      return;
+    }
+
+    if (event.op === "sync" && Array.isArray(event.activities)) {
+      for (const [key, activity] of activities) {
+        if (activity.source === activitySource) activities.delete(key);
+      }
+      for (const value of event.activities) {
+        const activity = parseActivity(value, activitySource);
+        if (activity) activities.set(activityKey(activity.source, activity.id), activity);
+      }
+      publishActivityState();
+    }
+  });
+
+  const unsubscribeBlocked = pi.events.on("herdr:blocked", (data) => {
     if (!rootSession) {
       return;
     }
@@ -315,20 +416,26 @@ export default function (pi) {
     publishState();
   });
 
-  pi.on("session_start", (_event, ctx) => {
+  pi.on("session_start", async (event, ctx) => {
     if (ctx?.hasUI !== true) {
       return;
     }
     rootSession = true;
     updateSessionRef(ctx);
-    void reportSession();
+    await reportSession(event?.reason);
+    // A reload can replace this extension mid-run without emitting another agent_start.
+    agentActive = ctx?.isIdle?.() === false;
+    // Background-work producers answer synchronously with an owner-scoped snapshot.
+    pi.events.emit(activityChannel, { version: activityVersion, op: "sync-request" });
     publishState(true);
   });
 
-  pi.on("agent_start", () => {
+  pi.on("agent_start", (_event, ctx) => {
     if (!rootSession) {
       return;
     }
+    updateSessionRef(ctx);
+    void reportSession();
     clearPendingTimers();
     clearFailureState();
     agentActive = true;
@@ -357,11 +464,15 @@ export default function (pi) {
     scheduleIdle();
   });
 
-  pi.on("session_shutdown", async () => {
+  pi.on("session_shutdown", async (event) => {
+    unsubscribeActivity();
+    unsubscribeBlocked();
     if (!rootSession) {
       return;
     }
     clearPendingTimers();
-    await releaseAgent();
+    if (shouldReleaseOnSessionShutdown(event)) {
+      await releaseAgent();
+    }
   });
 }

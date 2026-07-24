@@ -426,10 +426,23 @@ in {
     force = true;
   };
   home.file.".pi/agent/settings.json".source = dotfile "pi/agent/settings.json";
+  # Keep this writable because /codex saves settings with an atomic rename.
+  # Seed only missing installs instead of managing it as a Home Manager symlink.
+  home.activation.seedPiCodexConversionConfig = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+    configPath=${lib.escapeShellArg "${config.home.homeDirectory}/.pi/agent/pi-codex-conversion.json"}
+    sourcePath=${lib.escapeShellArg "${flakeRoot}/dotfiles/pi/agent/pi-codex-conversion.json"}
+    if [[ ! -e "$configPath" ]]; then
+      run ${pkgs.coreutils}/bin/install -D -m 600 "$sourcePath" "$configPath"
+    fi
+  '';
   home.file.".pi/remote/config.json".source = dotfile "pi/remote/config.json";
   home.file.".pi/agent/AGENTS.md".source = dotfile agentContextFile;
   home.file.".pi/agent/extensions/herdr-agent-state.ts" = {
     source = dotfile "pi/agent/extensions/herdr-agent-state.ts";
+    force = true;
+  };
+  home.file.".pi/agent/extensions/herdr-workflow-activity.ts" = {
+    source = dotfile "pi/agent/extensions/herdr-workflow-activity.ts";
     force = true;
   };
   home.file.".pi/agent/extensions/moshi-hooks.ts" = {

@@ -33,8 +33,20 @@ memories = true
 [hooks.state]
 
 [hooks.state."/home/emilio/.codex/hooks.json:session_start:0:0"]
-trusted_hash = "sha256:f77ba403a9658bc540fffa73346ee929294cd8e47217a8bd7c2418b5e80deaf0"
+trusted_hash = "sha256:341f095eb06db5b52fa3c919f6e3ba2ada4c63883b73a18707a760623a7fc589"
 enabled = true
+
+[hooks.state."/home/emilio/.codex/hooks.json:permission_request:0:0"]
+trusted_hash = "sha256:116a9685859d048b4d5ee8df065edd71349460d9eb8eaf9e05e6ce900189c359"
+
+[hooks.state."/home/emilio/.codex/hooks.json:session_start:1:0"]
+trusted_hash = "sha256:c012229fa51869694741677a9d4e21470e1058a6d60205ddcff85911a401dbeb"
+
+[hooks.state."/home/emilio/.codex/hooks.json:user_prompt_submit:0:0"]
+trusted_hash = "sha256:48d6755760f7ab642548ee60d727316f826848bd35e97d9050ec79d00a4979ce"
+
+[hooks.state."/home/emilio/.codex/hooks.json:stop:0:0"]
+trusted_hash = "sha256:e8cddb92eb048507994711f466eaa945796fe103d62c19e5f4995a86ee8de1e7"
 
 [mcp_servers.openaiDeveloperDocs]
 url = "https://developers.openai.com/mcp"

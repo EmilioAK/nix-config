@@ -79,7 +79,10 @@
   };
 
   services.qemuGuest.enable = true;
-  zramSwap.enable = true;
+  zramSwap = {
+    enable = true;
+    memoryPercent = 150;
+  };
 
   # This wipes only the VPS root disk. The Hetzner volume is /dev/sdb and is
   # mounted separately below by UUID.

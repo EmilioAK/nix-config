@@ -1,19 +1,19 @@
 {
   "packages": [
-    "npm:@viniraioli/pi-claude-style-tools",
+    "npm:pi-claude-code-ui",
     "npm:pi-mcp-adapter",
     "npm:pi-claude-style-scroll",
     "npm:pi-web-access",
-    "npm:remote-pi",
     "npm:pi-claude-marketplace",
     "npm:@aliou/pi-processes",
     "npm:@narumitw/pi-btw",
     "npm:@tifan/pi-recap",
-    "npm:@quintinshaw/pi-dynamic-workflows"
+    "npm:@quintinshaw/pi-dynamic-workflows",
+    "npm:@howaboua/pi-codex-conversion"
   ],
-  "lastChangelogVersion": "0.80.10",
+  "lastChangelogVersion": "0.82.0",
   "defaultProvider": "openai-codex",
-  "defaultModel": "gpt-5.6-sol",
+  "defaultModel": "gpt-5.3-codex-spark",
   "defaultThinkingLevel": "xhigh",
   "theme": "dark"
 }
