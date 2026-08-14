@@ -9,6 +9,7 @@
     casks = [
       "docker-desktop"
       "netbirdio/tap/netbird-ui"
+      "obs"
       "slack"
       "mactex-no-gui"
     ];
