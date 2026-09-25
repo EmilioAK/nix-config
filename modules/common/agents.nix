@@ -13,31 +13,26 @@ let
   };
   codexConfigFile = codexConfigByHost.${hostname}
     or (throw "No Codex config declared for host ${hostname}");
+
+  # Desktop Code sessions also use these settings. Keep the Mac's settings
+  # separate from the VPS's terminal integration.
+  claudeSettingsFile = if pkgs.stdenv.isDarwin
+    then "claude/settings.mac.json"
+    else "claude/settings.json";
 in {
+  # The desktop app uses the same Codex configuration as the CLI.
   home.file.".codex/AGENTS.md".source = dotfile agentContextFile;
   home.file.".codex/config.toml".source = dotfile codexConfigFile;
-  home.file.".codex/hooks.json" = {
-    source = dotfile "codex/hooks.json";
-    force = true;
-  };
   home.file.".codex/rules/default.rules".source = dotfile "codex/rules/default.rules";
-  home.file.".codex/hooks/herdr-agent-state.sh" = {
-    source = dotfile "codex/hooks/herdr-agent-state.sh";
-    force = true;
-  };
 
   # Claude Code atomically rewrites settings beside the symlink's immediate
   # target. Home Manager's normal store indirection makes that directory
   # read-only, so create a direct, writable out-of-store link instead.
   home.activation.linkClaudeSettings = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
     settingsPath=${lib.escapeShellArg "${config.home.homeDirectory}/.claude/settings.json"}
-    sourcePath=${lib.escapeShellArg "${flakeRoot}/dotfiles/claude/settings.json"}
+    sourcePath=${lib.escapeShellArg "${flakeRoot}/dotfiles/${claudeSettingsFile}"}
     run mkdir -p "$(${pkgs.coreutils}/bin/dirname "$settingsPath")"
     run rm -f "$settingsPath"
     run ln -s "$sourcePath" "$settingsPath"
   '';
-  home.file.".claude/hooks/herdr-agent-state.sh" = {
-    source = dotfile "claude/hooks/herdr-agent-state.sh";
-    force = true;
-  };
 }

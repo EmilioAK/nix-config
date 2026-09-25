@@ -1,5 +1,6 @@
 *
 !/.gitignore
 !/settings.json
+!/settings.mac.json
 !/hooks/
 !/hooks/herdr-agent-state.sh

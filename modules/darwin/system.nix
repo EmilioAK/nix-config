@@ -85,6 +85,9 @@ in {
     };
     NSGlobalDomain = {
       AppleInterfaceStyle = "Dark";
+      # Repeat held keys for Vim navigation instead of showing accent choices.
+      ApplePressAndHoldEnabled = false;
+      # Short delay and fast repeat; lower values are faster.
       InitialKeyRepeat = 14;
       KeyRepeat = 2;
       NSAutomaticCapitalizationEnabled = false;

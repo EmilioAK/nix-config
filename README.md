@@ -218,16 +218,30 @@ Zsh plugins are loaded by Antidote from `dotfiles/zsh/antidote-*.txt`. The
 manager and bundle list are Nix/Home Manager-managed; cloned plugin checkouts
 live in Antidote's cache and are updated by `sup`.
 
-Agent configuration is wired up in `modules/common/agents.nix`:
+The Mac uses the ChatGPT (including Codex) and Claude desktop apps, installed
+through the `chatgpt` and `claude` casks in `modules/darwin/homebrew.nix`.
+It does not install the standalone `codex`, `claude-code`, or `herdr` packages.
+The headless VPS keeps those packages and the Herdr configuration/hooks in
+`modules/nixos/home.nix`; the `herdr` flake input is still needed there.
+
+App and agent settings remain wired up in `modules/common/agents.nix`:
 
 - `dotfiles/agents/AGENTS.default.md` is the global instruction file. A host
   gets its own file only if `agentContextByHost` names one; everything else
   falls back to the default.
-- Claude Code settings and both `herdr-agent-state.sh` hooks are writable
-  out-of-store symlinks, because both agents rewrite their own config at
-  runtime.
-- Codex config is per-host: `dotfiles/codex/config.<host>.toml`.
+- Codex config is per-host: `dotfiles/codex/config.<host>.toml`. The desktop
+  app also uses `~/.codex/config.toml`, instructions, and rules.
+- Claude desktop Code sessions share `~/.claude/settings.json` with the CLI.
+  The Mac uses `dotfiles/claude/settings.mac.json`, without Herdr hooks; the
+  VPS keeps `dotfiles/claude/settings.json` and its terminal hooks.
+- Settings use writable out-of-store symlinks because the apps and agents
+  update their own configuration. Claude settings use a direct link so its
+  atomic writes do not target a read-only Nix store directory.
 - Secrets live outside git at `~/.agents/secrets`.
+
+Use `sb` to build the Mac changes before applying them with `ssw`. Check the
+Homebrew cask list first: activation also upgrades apps and runs
+`cleanup = "zap"`, which can remove apps absent from the declared configuration.
 
 ## Adding a machine
 

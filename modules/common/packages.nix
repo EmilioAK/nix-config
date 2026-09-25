@@ -1,4 +1,4 @@
-{ pkgs, inputs, ... }: {
+{ pkgs, ... }: {
   home.packages = with pkgs; [
     # Editor and language tooling
     neovim
@@ -19,11 +19,6 @@
     git
     gh
     lazygit
-
-    # Coding agents
-    claude-code
-    codex
-    inputs.herdr.packages.${pkgs.stdenv.hostPlatform.system}.default
 
     # Misc
     fastfetch

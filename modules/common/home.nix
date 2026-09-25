@@ -45,17 +45,4 @@
     dotfile "zsh/antidote-before-compinit.txt";
   xdg.configFile."zsh/antidote-after-compinit.txt".source =
     dotfile "zsh/antidote-after-compinit.txt";
-
-  xdg.configFile."herdr/config.toml" = {
-    source = dotfile "herdr/config.toml";
-    force = true;
-  };
-  xdg.configFile."herdr/rename-agent-launch.sh" = {
-    source = dotfile "herdr/rename-agent-launch.sh";
-    force = true;
-  };
-  xdg.configFile."herdr/rename-agent-prompt.sh" = {
-    source = dotfile "herdr/rename-agent-prompt.sh";
-    force = true;
-  };
 }

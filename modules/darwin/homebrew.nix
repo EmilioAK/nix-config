@@ -22,7 +22,7 @@
       "nikitabobko/tap/aerospace"
       "karabiner-elements"
       "google-chrome"
-      # Codex desktop app; Homebrew retains the historical cask token.
+      # ChatGPT desktop app, including Codex; separate from the CLI package.
       "chatgpt"
       "claude"
       "discord"
