@@ -4,9 +4,9 @@ let
 
   # The rebuild helpers are identical across platforms apart from these two
   # commands, so define them once and interpolate.
-  rebuild = if pkgs.stdenv.isDarwin then "darwin-rebuild" else "nixos-rebuild";
+  rebuild = if pkgs.stdenv.hostPlatform.isDarwin then "darwin-rebuild" else "nixos-rebuild";
   currentHostname =
-    if pkgs.stdenv.isDarwin then "scutil --get LocalHostName" else "hostname";
+    if pkgs.stdenv.hostPlatform.isDarwin then "scutil --get LocalHostName" else "hostname";
 
   rebuildFunctions = ''
     sb() {

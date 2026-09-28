@@ -16,7 +16,7 @@ let
 
   # Desktop Code sessions also use these settings. Keep the Mac's settings
   # separate from the VPS's terminal integration.
-  claudeSettingsFile = if pkgs.stdenv.isDarwin
+  claudeSettingsFile = if pkgs.stdenv.hostPlatform.isDarwin
     then "claude/settings.mac.json"
     else "claude/settings.json";
 in {

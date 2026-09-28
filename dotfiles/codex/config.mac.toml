@@ -1,7 +1,7 @@
 #:schema https://developers.openai.com/codex/config-schema.json
 
 model = "gpt-6-astra"
-model_reasoning_effort = "max"
+model_reasoning_effort = "low"
 approval_policy = "never"
 sandbox_mode = "danger-full-access"
 approvals_reviewer = "user"
