@@ -6,7 +6,8 @@ let
     HOMEBREW_CLEANUP_MAX_AGE_DAYS=7
     HOMEBREW_CLEANUP_PERIODIC_FULL_DAYS=1
   '';
-in {
+in
+{
   home-manager.users.${username} = {
     # Brew chooses its user config path based on whether XDG_CONFIG_HOME is set.
     xdg.configFile."homebrew/brew.env".text = cachePolicy;
@@ -46,6 +47,7 @@ in {
       "trezor-suite"
       "obsidian"
       "anki"
+      "highball"
     ];
 
     masApps = {
